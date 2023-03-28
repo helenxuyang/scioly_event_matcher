@@ -1,0 +1,19 @@
+.event-table {
+    width: 50%;
+    display: inline-block;
+}
+
+.rating-count {
+    border: 2px solid aqua;
+    border-radius: 8px;
+    margin: 2px;
+    padding: 4px;
+}
+
+.event-card {
+    background-color: blanchedalmond;
+    border-radius: 8px;
+    margin: 8px;
+    padding: 8px;
+    width: 50%;
+}
