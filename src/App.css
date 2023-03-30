@@ -41,9 +41,13 @@
   display: flex;
 }
 
-.half-table {
+.half {
   flex: 50%;
-  /* height: 600px; */
-  margin: 16px;
   background-color: antiquewhite;
+}
+
+.table {
+  height: 600px;
+  margin: 16px;
+  overflow-y: auto;
 }

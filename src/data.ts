@@ -23,34 +23,20 @@ export const studentsData: Student[] = [
   new Student(2, "Nancy", fakeRatings3),
 ];
 
-export const sortStudentsByPickiness = (students: Student[]) => {
-  const studentsCopy = [...students];
+export const sortStudentsByPickiness = () => {
+  const studentsCopy = [...studentsData];
   return studentsCopy.sort((a, b) => a.getPickiness() - b.getPickiness());
 };
 
-export const sortEventsByPopularity = (
-  events: Event[],
-  students: Student[]
-) => {
-  const eventsCopy = [...events];
+export const sortEventsByPopularity = () => {
+  const eventsCopy = [...eventsData];
   return eventsCopy.sort(
-    (a, b) => a.getPopularity(students) - b.getPopularity(students)
+    (a, b) => a.getPopularity(studentsData) - b.getPopularity(studentsData)
   );
 };
 
-export const getPopularityRank = (
-  event: Event,
-  events: Event[],
-  students: Student[]
-) => {
-  const pop = event.getPopularity(students)
-  const popularities = events.map((e) => e.getPopularity(students));
-  const popularitiesSorted = [...new Set(popularities)].sort((a, b) => a - b);
-  console.log(popularitiesSorted);
-  for (let i = 0; i < popularitiesSorted.length; i++) {
-    if (pop === popularitiesSorted[i]) {
-      return i+1;
-    }
-  }
-  return -1;
-};
+export const sortEventsByReversePopularity = () => {
+  let sortedByPop = sortEventsByPopularity();
+  sortedByPop.reverse();
+  return sortedByPop;
+}

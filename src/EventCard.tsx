@@ -1,23 +1,21 @@
 import "./Event.css";
-import { eventsData, getPopularityRank, studentsData } from "data";
-import { Droppable } from "react-beautiful-dnd";
+import { studentsData } from "data";
 import { StudentCard } from "StudentCard";
 import { Event } from "Event";
 import { getRatingColor } from "utils";
+import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
+import { useContext } from "react";
 
 type EventCardProps = {
   event: Event;
   sids: number[];
-  selectEvent: (eid: number) => void;
-  isSelected: boolean;
 };
 
-export const EventCard = ({
-  event,
-  sids,
-  selectEvent,
-  isSelected,
-}: EventCardProps) => {
+export const EventCard = ({ event, sids }: EventCardProps) => {
+  const { selectedEvent, setSelectedEvent } = useContext(
+    AssignmentsContext
+  ) as AssignmentsContextType;
+
   const ratingInfo = () => {
     const freqs = event.getRatingFreqs(studentsData, 5);
     return (
@@ -39,40 +37,30 @@ export const EventCard = ({
   };
 
   return (
-    <button
-      className="event-card"
-      style={{
-        backgroundColor: isSelected ? "gold" : "white",
-      }}
-      onClick={() => selectEvent(event.id)}
-    >
-      {" #" + getPopularityRank(event, eventsData, studentsData)}
-      <strong className="event-name">{event.name}</strong>
-      {ratingInfo()}
-      <Droppable droppableId={"" + event.id} key={event.id}>
-        {(provided, snapshot) => {
-          return (
-            <div
-              className="assigned-list"
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {sids.map((sid, index) => {
-                return (
-                  <StudentCard
-                    key={"assigned" + sid}
-                    student={studentsData[sid]}
-                    index={index}
-                    eventId={event.id}
-                    shouldHighlight={false}
-                  />
-                );
-              })}
-              <span key="placeholder">{provided.placeholder}</span>
-            </div>
-          );
+    <div className="event-card">
+      <button
+        style={{
+          backgroundColor: selectedEvent === event.id ? "gold" : "white",
         }}
-      </Droppable>
-    </button>
+        onClick={() =>
+          setSelectedEvent(selectedEvent === event.id ? undefined : event.id)
+        }
+      >
+        <strong className="event-name">{event.name}</strong>
+        {ratingInfo()}
+      </button>
+
+      <div className="assigned-list">
+        {sids.map((sid, index) => {
+          return (
+            <StudentCard
+              key={"assigned" + sid}
+              student={studentsData[sid]}
+              currentEvent={event.id}
+            />
+          );
+        })}
+      </div>
+    </div>
   );
 };

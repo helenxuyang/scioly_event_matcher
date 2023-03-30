@@ -13,10 +13,12 @@
     border-radius: 8px;
     padding: 8px;
     margin: 8px;
+    border: none;
 }
 
 .student-name {
     padding: 0px;
+    font-size: 16px;
 }
 
 .current-event-rating {

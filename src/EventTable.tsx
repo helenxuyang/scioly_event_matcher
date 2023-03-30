@@ -1,37 +1,29 @@
-import { Event } from "Event";
 import "./Event.css";
-import { eventsData, studentsData } from "data";
-import { Droppable } from "react-beautiful-dnd";
-import { StudentCard } from "StudentCard";
+import { eventsData } from "data";
 import { EventCard } from "EventCard";
+import { useContext } from "react";
+import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
 
-type EventTableProps = {
-  events: number[];
-  assignments: number[][];
-  selectEvent: (eid: number) => void;
-  selectedEvent: number | undefined;
-};
+// type EventTableProps = {};
 
-const EventTable = ({
-  events,
-  assignments,
-  selectEvent,
-  selectedEvent,
-}: EventTableProps) => {
+const EventTable = () => {
+  const { assignments, events } = useContext(
+    AssignmentsContext
+  ) as AssignmentsContextType;
   return (
-    <div className="half-table">
+    <div className="half">
       <h2>Events</h2>
-      {events.map((eid) => {
-        return (
-          <EventCard
-            key={eid}
-            event={eventsData[eid]}
-            sids={assignments[eid]}
-            selectEvent={selectEvent}
-            isSelected={eid === selectedEvent}
-          />
-        );
-      })}
+      <div className="table">
+        {events.map((eid) => {
+          return (
+            <EventCard
+              key={eid}
+              event={eventsData[eid]}
+              sids={assignments[eid]}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };
