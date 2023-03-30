@@ -90,8 +90,10 @@ function App() {
   return (
     <div className="App">
       <DragDropContext onDragEnd={onDragEnd}>
-        <StudentTable students={students} />
-        <EventTable events={events} assignments={assignments} />
+        <div className="table-holder">
+          <EventTable events={events} assignments={assignments} />
+          <StudentTable students={students} />{" "}
+        </div>
       </DragDropContext>
     </div>
   );

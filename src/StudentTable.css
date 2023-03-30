@@ -1,19 +1,21 @@
 .student-table {
-    width: 50%;
-    display: inline-block;
+    flex: 50%;
     background-color: azure;
     padding: 16px;
 }
 
-/* .events-list {
-    border: 2px solid blue;
-    border-radius: 8px;
-    margin: 2px;
-    padding: 4px;
-} */
+.events-list {
+    font-size: 10px;
+}
 
 .student-card {
-    border: 2px solid blue;
+    background-color: slategray;
+    color: white;
     border-radius: 8px;
-    margin: 4px;
+    padding: 8px;
+    margin: 8px;
+}
+
+.student-name {
+    padding: 0px;
 }

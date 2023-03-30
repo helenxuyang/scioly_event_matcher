@@ -1,8 +1,6 @@
-import { Student } from "Student";
-import { Event } from "Event";
 import "./StudentTable.css";
-import { Draggable, Droppable } from "react-beautiful-dnd";
-import { studentsData, eventsData } from "data";
+import { Droppable } from "react-beautiful-dnd";
+import { studentsData } from "data";
 import { StudentCard } from "StudentCard";
 
 type StudentTableProps = {
@@ -11,12 +9,18 @@ type StudentTableProps = {
 
 export const StudentTable = ({ students }: StudentTableProps) => {
   return (
-    <div className="student-table">
+    <div className="half-table">
+      <h2>Students</h2>
       <Droppable droppableId="-1">
         {(provided, snapshot) => (
           <div key={"hi"} ref={provided.innerRef} {...provided.droppableProps}>
             {students.map((id, index) => (
-              <StudentCard key={id} student={studentsData[id]} index={index} />
+              <StudentCard
+                key={id}
+                student={studentsData[id]}
+                index={index}
+                hasEvent={false}
+              />
             ))}
             <span key="placeholder">{provided.placeholder}</span>
           </div>

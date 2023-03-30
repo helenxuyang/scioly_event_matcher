@@ -28,7 +28,7 @@ type EventCardProps = {
 const ratingInfo = (event: Event) => {
   const freqs = event.getRatingFreqs(studentsData);
   return (
-    <div>
+    <div className="rating-info">
       {Array.from(freqs.keys()).map((key) => {
         return (
           <span key={key} className="rating-count">
@@ -43,18 +43,23 @@ const ratingInfo = (event: Event) => {
 const EventCard = ({ event, sids }: EventCardProps) => {
   return (
     <div className="event-card">
-      <p>{event.name}</p>
+      <strong>{event.name}</strong>
       {ratingInfo(event)}
       <Droppable droppableId={"" + event.id} key={event.id}>
         {(provided, snapshot) => {
           return (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
+            <div
+              className="assigned-list"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
               {sids.map((sid, index) => {
                 return (
                   <StudentCard
                     key={"assigned" + sid}
                     student={studentsData[sid]}
                     index={index}
+                    hasEvent={true}
                   />
                 );
               })}
@@ -79,7 +84,8 @@ const EventTable = ({ events, assignments }: EventTableProps) => {
   // };
 
   return (
-    <div>
+    <div className="half-table">
+      <h2>Events</h2>
       {events.map((eid) => {
         return (
           <EventCard

@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+.table-holder {
+  display: flex;
+}
+
+.half-table {
+  flex: 50%;
+  margin: 16px;
+  background-color: antiquewhite;
+}
