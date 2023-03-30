@@ -43,6 +43,7 @@
 
 .half-table {
   flex: 50%;
+  /* height: 600px; */
   margin: 16px;
   background-color: antiquewhite;
 }

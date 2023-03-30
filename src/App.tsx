@@ -1,10 +1,8 @@
 import React, { useCallback, useState } from "react";
 import "./App.css";
 // import survey from "./data/survey.csv";
-import { Student } from "Student";
 import { StudentTable } from "StudentTable";
 import EventTable from "EventTable";
-import { Event } from "Event";
 import {
   eventsData,
   sortEventsByPopularity,
@@ -35,6 +33,16 @@ function App() {
   const [events, setEvents] = useState<number[]>(
     sortEventsByPopularity(eventsData, studentsData).map((e) => e.id)
   );
+
+  const [selectedEvent, setSelectedEvent] = useState<number | undefined>();
+
+  const selectEvent = (eid: number) => {
+    if (selectedEvent === eid) {
+      setSelectedEvent(undefined);
+    } else {
+      setSelectedEvent(eid);
+    }
+  };
 
   const onDragStart = useCallback(() => {
     /*...*/
@@ -91,8 +99,13 @@ function App() {
     <div className="App">
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="table-holder">
-          <EventTable events={events} assignments={assignments} />
-          <StudentTable students={students} />{" "}
+          <EventTable
+            events={events}
+            assignments={assignments}
+            selectEvent={selectEvent}
+            selectedEvent={selectedEvent}
+          />
+          <StudentTable students={students} selectedEvent={selectedEvent} />{" "}
         </div>
       </DragDropContext>
     </div>

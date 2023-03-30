@@ -1,16 +1,21 @@
 import { eventsData } from "data";
 import { Draggable } from "react-beautiful-dnd";
 import { Student } from "Student";
+import { getRatingColor, ratingColors } from "utils";
 
 type StudentCardProps = {
   student: Student;
   index: number;
   eventId: number | undefined;
+  shouldHighlight: boolean;
 };
 
-const colors = ["seagreen", "olivedrab", "goldenrod", "darkorange", "darkred"];
-
-export const StudentCard = ({ student, index, eventId }: StudentCardProps) => {
+export const StudentCard = ({
+  student,
+  index,
+  eventId,
+  shouldHighlight,
+}: StudentCardProps) => {
   const getPrefs = () => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((rating) => {
       const eventsWithRating = student.getEventsWithRating(rating, eventsData);
@@ -26,6 +31,17 @@ export const StudentCard = ({ student, index, eventId }: StudentCardProps) => {
 
   const currentEventRating =
     eventId !== undefined ? student.prefs[eventId] : -1;
+
+  const backgroundColor = () => {
+    if (eventId === undefined) {
+      if (shouldHighlight) {
+        return "darkslateblue";
+      }
+      return "black";
+    }
+    return getRatingColor(currentEventRating);
+  };
+
   return (
     <Draggable draggableId={"" + student.id} index={index} key={student.name}>
       {(provided, snapshot) => {
@@ -38,8 +54,7 @@ export const StudentCard = ({ student, index, eventId }: StudentCardProps) => {
             {...provided.dragHandleProps}
             style={{
               ...provided.draggableProps.style,
-              backgroundColor:
-                eventId !== undefined ? colors[currentEventRating - 1] : "gray",
+              backgroundColor: backgroundColor(),
             }}
           >
             <strong className="student-name">{student.name}</strong>

@@ -19,14 +19,16 @@ export class Event {
         return rankingSum;
     }
 
-    getRatingFreqs(students: Student[]) {
+    getRatingFreqs(students: Student[], upTo=5) {
         const freqs = new Map();
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= upTo; i++) {
             freqs.set(i, 0);
         }
         for (const student of students) {
             const rating = student.prefs[this.id];
-            freqs.set(rating, freqs.get(rating) + 1);
+            if (rating <= upTo) {
+                freqs.set(rating, freqs.get(rating) + 1);
+            }
         }
         return freqs;
     }
