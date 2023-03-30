@@ -5,10 +5,12 @@ import { Student } from "Student";
 type StudentCardProps = {
   student: Student;
   index: number;
-  hasEvent: boolean;
+  eventId: number | undefined;
 };
 
-export const StudentCard = ({ student, index, hasEvent }: StudentCardProps) => {
+const colors = ["seagreen", "olivedrab", "goldenrod", "darkorange", "darkred"];
+
+export const StudentCard = ({ student, index, eventId }: StudentCardProps) => {
   const getPrefs = () => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((rating) => {
       const eventsWithRating = student.getEventsWithRating(rating, eventsData);
@@ -21,6 +23,9 @@ export const StudentCard = ({ student, index, hasEvent }: StudentCardProps) => {
       );
     });
   };
+
+  const currentEventRating =
+    eventId !== undefined ? student.prefs[eventId] : -1;
   return (
     <Draggable draggableId={"" + student.id} index={index} key={student.name}>
       {(provided, snapshot) => {
@@ -31,9 +36,20 @@ export const StudentCard = ({ student, index, hasEvent }: StudentCardProps) => {
             className="student-card"
             {...provided.draggableProps}
             {...provided.dragHandleProps}
+            style={{
+              ...provided.draggableProps.style,
+              backgroundColor:
+                eventId !== undefined ? colors[currentEventRating - 1] : "gray",
+            }}
           >
             <strong className="student-name">{student.name}</strong>
-            {!hasEvent && getPrefs()}
+            {eventId !== undefined ? (
+              <span className="current-event-rating">
+                ({currentEventRating})
+              </span>
+            ) : (
+              getPrefs()
+            )}
           </div>
         );
       }}

@@ -19,7 +19,7 @@ export const StudentTable = ({ students }: StudentTableProps) => {
                 key={id}
                 student={studentsData[id]}
                 index={index}
-                hasEvent={false}
+                eventId={undefined}
               />
             ))}
             <span key="placeholder">{provided.placeholder}</span>
