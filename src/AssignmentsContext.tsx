@@ -1,15 +1,7 @@
-import {
-  eventsData,
-  sortEventsByReversePopularity,
-  sortStudentsByPickiness,
-  studentsData,
-} from "data";
-import React, { createContext, Dispatch, useReducer, useState } from "react";
-
-const initAssignments: number[][] = eventsData.map((e) => []);
-
-const initStudents = sortStudentsByPickiness().map((s) => s.id);
-const initEvents = sortEventsByReversePopularity().map((e) => e.id);
+import { SciolyEvent } from "SciolyEvent";
+import { Student } from "Student";
+import { createContext, Dispatch, useReducer, useState } from "react";
+import { Division } from "types";
 
 type AssignmentsReducerAction = {
   sid: number;
@@ -18,98 +10,81 @@ type AssignmentsReducerAction = {
 };
 
 export type AssignmentsContextType = {
-  assignments: number[][];
-  setAssignments: Dispatch<AssignmentsReducerAction>;
-  students: number[];
-  setStudents: Dispatch<AssignmentsReducerAction>;
-  events: number[];
-  setEvents: (events: number[]) => void;
+  students: Student[];
+  setStudents: (events: Student[]) => void;
+  events: SciolyEvent[];
+  setEvents: (events: SciolyEvent[]) => void;
+  assignments: Map<number, number[]>;
+  dispatchUpdateAssignment: Dispatch<AssignmentsReducerAction>;
   selectedEvent: number | undefined;
   setSelectedEvent: (eid: number | undefined) => void;
+  getAssignedEid: (sid: number) => number | undefined;
+  division: Division;
+  setDivision: (div: Division) => void;
 };
+
 export const AssignmentsContext = createContext<AssignmentsContextType | null>(
   null
 );
 
-// CASES
-/* curr --- sel --- result
-   has      has     different -> remove from curr event, add to sel event; same -> nothing
-   no       has     remove from students, add to sel
-   has      no      remove from curr, add to students
-   no       no      nothing
-*/
 export const AssignmentsProvider = (props: any) => {
-  const assignmentsReducer = (
-    state: number[][],
+  // reducer that updates assignments
+  const handleUpdateAssignment = (
+    state: Map<number, number[]>,
     action: AssignmentsReducerAction
-  ): number[][] => {
+  ): Map<number, number[]> => {
+
     const { sid, currentEvent, selectedEvent } = action;
-    // has has diff
-    if (
-      currentEvent !== undefined &&
-      selectedEvent !== undefined &&
-      currentEvent !== selectedEvent
-    ) {
-      const newAssignments = [...state];
-      newAssignments[currentEvent] = newAssignments[currentEvent].filter(
-        (id) => id !== sid
-      );
-      newAssignments[selectedEvent].push(sid);
-      return newAssignments;
+    const newAssignments = new Map(state);
+    const hasCurrentEvent = currentEvent !== undefined;
+    const hasSelectedEvent = selectedEvent !== undefined;
+    const currentSids = hasCurrentEvent ? (state.get(currentEvent) ?? []) : [];
+    const selectedSids = hasSelectedEvent ? (state.get(selectedEvent) ?? []) : [];
+    // doesn't currently have an event, selected an event - assign
+    if (!hasCurrentEvent && hasSelectedEvent) {
+      newAssignments.set(selectedEvent, [...selectedSids, sid]);
     }
-    // no has
-    if (currentEvent === undefined && selectedEvent !== undefined) {
-      const newAssignments = [...state];
-      newAssignments[selectedEvent].push(sid);
-      return newAssignments;
+    // currently has an event, selected the student card - remove
+    if (hasCurrentEvent) {
+      newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
     }
-    // has no
-    if (currentEvent !== undefined && selectedEvent === undefined) {
-      const newAssignments = [...state];
-      newAssignments[currentEvent] = newAssignments[currentEvent].filter(
-        (id) => id !== sid
-      );
-      return newAssignments;
-    }
-    return state;
+    return newAssignments;
   };
 
-  const studentsReducer = (
-    state: number[],
-    action: AssignmentsReducerAction
-  ) => {
-    const { sid, currentEvent, selectedEvent } = action;
-    // has no
-    if (currentEvent !== undefined && selectedEvent === undefined) {
-      return [...state, sid];
-    }
-    // no has
-    else if (currentEvent === undefined && selectedEvent !== undefined) {
-      return state.filter((id) => id !== sid);
-    }
-    return state;
-  };
-
-  const [assignments, setAssignments] = useReducer(
-    assignmentsReducer,
-    initAssignments
+  const [students, setStudents] = useState<Student[]>([]);
+  const [events, setEvents] = useState<SciolyEvent[]>([]);
+  const [division, setDivision] = useState<('B' | 'C' | 'both')>('B');
+  const [assignments, dispatchUpdateAssignment] = useReducer(
+    handleUpdateAssignment,
+    new Map()
   );
-  const [students, setStudents] = useReducer(studentsReducer, initStudents);
-  const [events, setEvents] = useState(initEvents);
   const [selectedEvent, setSelectedEvent] = useState<number | undefined>(
     undefined
   );
+
+  const getAssignedEid = (sid: number): number | undefined => {
+    for (const eid of assignments.keys()) {
+      if (assignments.get(eid)?.includes(sid)) {
+        return eid;
+      }
+    }
+    return undefined;
+  }
+
   return (
     <AssignmentsContext.Provider
       value={{
-        assignments,
-        setAssignments,
         students,
         setStudents,
         events,
         setEvents,
+        assignments,
+        dispatchUpdateAssignment,
         selectedEvent,
         setSelectedEvent,
+        getAssignedEid,
+        division,
+        setDivision
       }}
     >
       {props.children}

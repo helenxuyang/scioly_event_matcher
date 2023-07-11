@@ -23,6 +23,12 @@
 }
 
 .event-name {
-    font-size: 16px;
+    font-size: 18px;
     margin: 8px;
+    line-height: 24px;
+}
+
+.table-button {
+    margin-left: 2px;
+    margin-right: 2px;
 }

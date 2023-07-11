@@ -24,3 +24,11 @@
 .current-event-rating {
     margin: 4px;
 }
+
+.student-card-expand {
+    margin-left: 4px;
+}
+
+.student-card-remove {
+    margin-right: 4px;
+}

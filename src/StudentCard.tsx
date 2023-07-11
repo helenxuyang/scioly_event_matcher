@@ -1,22 +1,30 @@
 import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
-import { eventsData } from "data";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Student } from "Student";
 import { getRatingColor } from "utils";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import { SciolyEvent } from "SciolyEvent";
 
 type StudentCardProps = {
   student: Student;
-  currentEvent: number | undefined;
 };
 
-export const StudentCard = ({ student, currentEvent }: StudentCardProps) => {
-  const { setAssignments, selectedEvent, setStudents } = useContext(
+export const StudentCard = ({ student }: StudentCardProps) => {
+  const { dispatchUpdateAssignment, selectedEvent, events, getAssignedEid, division } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
-  const getPrefs = () => {
+  const [expanded, setExpanded] = useState(false);
+  const currentEvent = getAssignedEid(student.id);
+  const hasCurrentEvent = currentEvent !== undefined;
+  const hasSelectedEvent = selectedEvent !== undefined;
+
+  const getPrefsList = () => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((rating) => {
-      const eventsWithRating = student.getEventsWithRating(rating, eventsData);
+      const eventsWithRating = student.getEventsWithRating(rating, SciolyEvent.getEventsByDivision(events, division));
       return (
         eventsWithRating.length > 0 && (
           <p className="events-list" key={"rating" + rating}>
@@ -28,22 +36,56 @@ export const StudentCard = ({ student, currentEvent }: StudentCardProps) => {
   };
 
   const currentEventRating =
-    currentEvent !== undefined ? student.prefs[currentEvent] : -1;
+    (currentEvent === undefined ? undefined : student.prefs.get(currentEvent));
+
+  const selectedEventRating =
+    (selectedEvent === undefined ? undefined : student.prefs.get(selectedEvent));
 
   const backgroundColor = () => {
-    if (currentEvent === undefined) {
-      if (selectedEvent !== undefined) {
-        console.log("selected");
-        return getRatingColor(student.prefs[selectedEvent]);
+    if (currentEventRating === undefined) {
+      if (selectedEventRating !== undefined) {
+        return getRatingColor(selectedEventRating);
       }
       return "darkblue";
     }
     return getRatingColor(currentEventRating);
   };
 
+  const getBorder = () => {
+    if (hasCurrentEvent && hasSelectedEvent) {
+      return `4px solid ${getRatingColor(selectedEventRating!)}`;
+    }
+    return undefined;
+  };
+
+  const getExpandOrCollapseIcon = () => {
+    if (hasCurrentEvent || hasSelectedEvent) {
+      return;
+    }
+    if (expanded) {
+      return <KeyboardArrowUpIcon fontSize="small" />;
+    }
+    else {
+      return <KeyboardArrowDownIcon fontSize="small" />;
+    }
+  }
+
+  const getAddOrRemoveIcon = () => {
+    if (hasCurrentEvent) {
+      return <CloseIcon fontSize="small" />;
+    }
+    else if (hasSelectedEvent) {
+      return <AddIcon fontSize="small" />;
+    }
+  }
+
   const handleClick = () => {
-    setAssignments({ sid: student.id, currentEvent, selectedEvent });
-    setStudents({ sid: student.id, currentEvent, selectedEvent });
+    if (selectedEvent === undefined && currentEvent === undefined) {
+      setExpanded(expanded => !expanded);
+    }
+    else {
+      dispatchUpdateAssignment({ sid: student.id, currentEvent: getAssignedEid(student.id), selectedEvent });
+    }
   };
 
   return (
@@ -52,15 +94,22 @@ export const StudentCard = ({ student, currentEvent }: StudentCardProps) => {
       className="student-card"
       style={{
         backgroundColor: backgroundColor(),
+        border: getBorder(),
       }}
-      onClick={(_) => handleClick()}
+      onClick={() => handleClick()}
+      onContextMenu={(event) => {
+        event.preventDefault();
+        setExpanded(expanded => !expanded);
+      }}
+
     >
-      <strong className="student-name">{student.name}</strong>
-      {currentEvent !== undefined ? (
-        <span className="current-event-rating">({currentEventRating})</span>
-      ) : (
-        getPrefs()
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {getAddOrRemoveIcon()}
+        <strong className="student-name">{student.name}</strong>
+        {getExpandOrCollapseIcon()}
+        {hasCurrentEvent && <span className="current-event-rating">({currentEventRating})</span>}
+      </div>
+      {expanded && getPrefsList()}
     </button>
   );
 };
