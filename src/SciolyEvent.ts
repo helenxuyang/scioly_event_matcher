@@ -74,4 +74,8 @@ export class SciolyEvent {
     }
     return events.filter(e => e.division.includes(division));
   }
+
+  static getEventByID(events: SciolyEvent[], id: number) {
+    return events.filter(event => event.id === id)[0];
+  }
 }

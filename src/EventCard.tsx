@@ -60,7 +60,7 @@ export const EventCard = ({ event, sids }: EventCardProps) => {
           return (
             <StudentCard
               key={"assigned" + student.id}
-              student={students[student.id]}
+              student={student}
             />
           );
         })}

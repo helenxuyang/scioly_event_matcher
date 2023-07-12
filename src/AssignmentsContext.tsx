@@ -44,9 +44,23 @@ export const AssignmentsProvider = (props: any) => {
     if (!hasCurrentEvent && hasSelectedEvent) {
       newAssignments.set(selectedEvent, [...selectedSids, sid]);
     }
-    // currently has an event, selected the student card - remove
+    // currently has an event
     if (hasCurrentEvent) {
-      newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
+      if (hasSelectedEvent) {
+        // swap
+        if (selectedEvent !== currentEvent) {
+          newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
+          newAssignments.set(selectedEvent, [...selectedSids, sid]);
+        }
+        // remove
+        else {
+          newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
+        }
+      }
+      // remove
+      else {
+        newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
+      }
     }
     return newAssignments;
   };

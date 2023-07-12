@@ -33,6 +33,7 @@ const PreferencesImporter = () => {
               }
               return new Student(idx, name, prefs);
             });
+          students.sort((studentA, studentB) => studentB.getPickiness() - studentA.getPickiness());
           setStudents(students);
           setEvents(SciolyEvent.getSortedEventsByDifficulty(events, students));
         }

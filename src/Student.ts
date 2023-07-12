@@ -34,4 +34,8 @@ export class Student {
     }
     return undefined;
   }
+
+  static getStudentByID(students: Student[], id: number) {
+    return students.filter(student => student.id === id)[0];
+  }
 }

@@ -6,6 +6,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { SciolyEvent } from "SciolyEvent";
 
 type StudentCardProps = {
@@ -70,8 +71,11 @@ export const StudentCard = ({ student }: StudentCardProps) => {
     }
   }
 
-  const getAddOrRemoveIcon = () => {
+  const getLeftIcon = () => {
     if (hasCurrentEvent) {
+      if (hasSelectedEvent && (currentEvent !== selectedEvent)) {
+        return <SwapVertIcon fontSize="small" />;
+      }
       return <CloseIcon fontSize="small" />;
     }
     else if (hasSelectedEvent) {
@@ -104,7 +108,7 @@ export const StudentCard = ({ student }: StudentCardProps) => {
 
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {getAddOrRemoveIcon()}
+        {getLeftIcon()}
         <strong className="student-name">{student.name}</strong>
         {getExpandOrCollapseIcon()}
         {hasCurrentEvent && <span className="current-event-rating">({currentEventRating})</span>}
