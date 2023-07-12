@@ -4,9 +4,10 @@ import { createContext, Dispatch, useReducer, useState } from "react";
 import { Division } from "types";
 
 type AssignmentsReducerAction = {
-  sid: number;
-  currentEvent: number | undefined;
-  selectedEvent: number | undefined;
+  assignments?: Map<number, number[]>;
+  sid?: number;
+  currentEvent?: number | undefined;
+  selectedEvent?: number | undefined;
 };
 
 export type AssignmentsContextType = {
@@ -15,7 +16,7 @@ export type AssignmentsContextType = {
   events: SciolyEvent[];
   setEvents: (events: SciolyEvent[]) => void;
   assignments: Map<number, number[]>;
-  dispatchUpdateAssignment: Dispatch<AssignmentsReducerAction>;
+  dispatchUpdateAssignments: Dispatch<AssignmentsReducerAction>;
   selectedEvent: number | undefined;
   setSelectedEvent: (eid: number | undefined) => void;
   getAssignedEid: (sid: number) => number | undefined;
@@ -29,47 +30,52 @@ export const AssignmentsContext = createContext<AssignmentsContextType | null>(
 
 export const AssignmentsProvider = (props: any) => {
   // reducer that updates assignments
-  const handleUpdateAssignment = (
+  const handleUpdateAssignments = (
     state: Map<number, number[]>,
     action: AssignmentsReducerAction
   ): Map<number, number[]> => {
-
-    const { sid, currentEvent, selectedEvent } = action;
-    const newAssignments = new Map(state);
-    const hasCurrentEvent = currentEvent !== undefined;
-    const hasSelectedEvent = selectedEvent !== undefined;
-    const currentSids = hasCurrentEvent ? (state.get(currentEvent) ?? []) : [];
-    const selectedSids = hasSelectedEvent ? (state.get(selectedEvent) ?? []) : [];
-    // doesn't currently have an event, selected an event - assign
-    if (!hasCurrentEvent && hasSelectedEvent) {
-      newAssignments.set(selectedEvent, [...selectedSids, sid]);
+    const { sid, currentEvent, selectedEvent, assignments } = action;
+    if (assignments !== undefined) {
+      return assignments;
     }
-    // currently has an event
-    if (hasCurrentEvent) {
-      if (hasSelectedEvent) {
-        // swap
-        if (selectedEvent !== currentEvent) {
-          newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
-          newAssignments.set(selectedEvent, [...selectedSids, sid]);
+    if (sid) {
+      const newAssignments = new Map(state);
+      const hasCurrentEvent = currentEvent !== undefined;
+      const hasSelectedEvent = selectedEvent !== undefined;
+      const currentSids = hasCurrentEvent ? (state.get(currentEvent) ?? []) : [];
+      const selectedSids = hasSelectedEvent ? (state.get(selectedEvent) ?? []) : [];
+      // doesn't currently have an event, selected an event - assign
+      if (!hasCurrentEvent && hasSelectedEvent) {
+        newAssignments.set(selectedEvent, [...selectedSids, sid]);
+      }
+      // currently has an event
+      if (hasCurrentEvent) {
+        if (hasSelectedEvent) {
+          // swap
+          if (selectedEvent !== currentEvent) {
+            newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
+            newAssignments.set(selectedEvent, [...selectedSids, sid]);
+          }
+          // remove
+          else {
+            newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
+          }
         }
         // remove
         else {
           newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
         }
       }
-      // remove
-      else {
-        newAssignments.set(currentEvent, currentSids.filter((id) => id !== sid));
-      }
+      return newAssignments;
     }
-    return newAssignments;
+    return state;
   };
 
   const [students, setStudents] = useState<Student[]>([]);
   const [events, setEvents] = useState<SciolyEvent[]>([]);
   const [division, setDivision] = useState<('B' | 'C' | 'both')>('B');
-  const [assignments, dispatchUpdateAssignment] = useReducer(
-    handleUpdateAssignment,
+  const [assignments, dispatchUpdateAssignments] = useReducer(
+    handleUpdateAssignments,
     new Map()
   );
   const [selectedEvent, setSelectedEvent] = useState<number | undefined>(
@@ -93,7 +99,7 @@ export const AssignmentsProvider = (props: any) => {
         events,
         setEvents,
         assignments,
-        dispatchUpdateAssignment,
+        dispatchUpdateAssignments: dispatchUpdateAssignments,
         selectedEvent,
         setSelectedEvent,
         getAssignedEid,

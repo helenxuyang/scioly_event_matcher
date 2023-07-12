@@ -14,7 +14,7 @@ type StudentCardProps = {
 };
 
 export const StudentCard = ({ student }: StudentCardProps) => {
-  const { dispatchUpdateAssignment, selectedEvent, events, getAssignedEid, division } = useContext(
+  const { dispatchUpdateAssignments: dispatchUpdateAssignment, selectedEvent, events, getAssignedEid, division } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 

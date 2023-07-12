@@ -34,6 +34,14 @@ export class SciolyEvent {
     return freqs;
   }
 
+  static getCopy(events: SciolyEvent[]) {
+    const copy = [];
+    for (const event of events) {
+      copy.push(new SciolyEvent(event.id, event.name, event.division));
+    }
+    return copy;
+  }
+
   static getSortedEventsByPopularity(events: SciolyEvent[], students: Student[]) {
     const sortedEvents = [];
     for (const event of events) {

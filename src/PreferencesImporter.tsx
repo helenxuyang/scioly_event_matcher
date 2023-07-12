@@ -3,9 +3,10 @@ import { SciolyEvent } from 'SciolyEvent';
 import { Student } from 'Student';
 import { useContext } from 'react';
 import CSVReader from 'react-csv-reader'
+import { getAutoAssignments } from 'utils';
 
 const PreferencesImporter = () => {
-  const { setEvents, setStudents } = useContext(
+  const { setEvents, setStudents, dispatchUpdateAssignments } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
   return <div>
