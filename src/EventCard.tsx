@@ -10,12 +10,9 @@ type EventCardProps = {
 };
 
 export const EventCard = ({ event }: EventCardProps) => {
-  const { students } = useContext(
+  const { students, selectedEvent, setSelectedEvent } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
-
-  // TODO fix
-  const assignedStudents = students.filter(student => student.assignments['eventC'] === student.id);
 
   const ratingInfo = () => {
     const freqs = event.getRatingFreqs(students, 5);
@@ -41,30 +38,17 @@ export const EventCard = ({ event }: EventCardProps) => {
     <div
       className="event-card"
       key={event.id}
-    // style={{ backgroundColor: assignedStudents.length === 0 ? "lightcoral" : "white" }}
     >
       <button
-        // TODO: update
-        onClick={() => { }
-          // setSelectedEvent(selectedEvent === event.id ? undefined : event.id)
-        }
+        onClick={() => {
+          setSelectedEvent(selectedEvent === event.id ? undefined : event.id)
+        }}
+        style={{ backgroundColor: (selectedEvent === event.id ? 'gold' : 'white') }}
+
       >
         <strong className="event-name">{`${event.name} ${event.division}`}</strong>
         {ratingInfo()}
       </button>
-
-      <div className="assigned-list">
-        {assignedStudents.map((student) => {
-          return (
-            // TODO: update
-            <span></span>
-            // <StudentCard
-            //   key={"assigned" + student.id}
-            //   student={student}
-            // />
-          );
-        })}
-      </div>
     </div>
   );
 };

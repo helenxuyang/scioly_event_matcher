@@ -1,12 +1,12 @@
 type Division = 'B' | 'C' | 'both';
 type StudentAssignments = {
-    eventC: number | undefined;
-    eventB: number | undefined;
-    qualityC: number | undefined;
-    qualityB: number | undefined;
+    esC: number | undefined;
+    esB: number | undefined;
+    qcC: number | undefined;
+    qcB: number | undefined;
 }
 
-type AssignmentType = 'eventC' | 'eventB' | 'qualityC' | 'qualityB';
+type AssignmentType = 'esC' | 'esB' | 'qcC' | 'qcB';
 
 
 export type { Division, StudentAssignments, AssignmentType };

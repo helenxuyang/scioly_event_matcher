@@ -12,10 +12,10 @@ export class Student {
     this.name = name;
     this.prefs = prefs;
     this.assignments = {
-      eventC: undefined,
-      eventB: undefined,
-      qualityC: undefined,
-      qualityB: undefined
+      esC: undefined,
+      esB: undefined,
+      qcC: undefined,
+      qcB: undefined
     }
   }
 
@@ -57,10 +57,10 @@ export class Student {
         newPrefs.set(key, student.prefs.get(key)!);
       }
       const newAssignments: StudentAssignments = {
-        eventC: student.assignments.eventC,
-        eventB: student.assignments.eventB,
-        qualityC: student.assignments.qualityC,
-        qualityB: student.assignments.qualityB,
+        esC: student.assignments.esC,
+        esB: student.assignments.esB,
+        qcC: student.assignments.qcC,
+        qcB: student.assignments.qcB,
       };
       const newStudent = new Student(student.id, student.name, newPrefs);
       newStudent.setAssignments(newAssignments);

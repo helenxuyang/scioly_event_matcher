@@ -2,66 +2,71 @@ import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
 import { StudentCard } from "StudentCard";
 import { useContext } from "react";
 import { AssignmentType, Division } from "types";
-import "./AssignmentTable.css";
+import "./AssignmentsTable.css";
 import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
 import { SciolyEvent } from "SciolyEvent";
 import { Student } from "Student";
+import { EventCard } from "EventCard";
 
-type AssignmentTableProps = {
+type AssignmentsTableProps = {
   division: Division,
 }
 
 const getDroppableId = (event: SciolyEvent, isQC: boolean) => {
-  return `${event.id}-${event.division}-${isQC ? 'qc' : 'es'}`;
+  return `${event.id}-${isQC ? 'qc' : 'es'}${event.division}`;
 }
 
-// sketchy
 const getAssignmentType = (droppableId: string) => {
-  let assignmentType = droppableId.slice(-2) === 'es' ? 'event' : 'quality';
-  assignmentType += droppableId.slice(-4, -3);
+  let assignmentType = droppableId.slice(-3);
   return assignmentType as AssignmentType;
 }
 
-// sketchy
 const getEventId = (droppableId: string) => {
   const firstDash = droppableId.indexOf('-');
   return parseInt(droppableId.substring(0, firstDash));
 }
 
-const AssignmentTable = ({ division }: AssignmentTableProps) => {
+const getDraggableId = (student: Student, assignmentType: AssignmentType) => {
+  return `${student.id}-${assignmentType}`;
+}
+
+const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
   const { events, students, updateAssignment, setSelectedEvent } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
   const getDraggable = (student: Student, idx: number, assignmentType: AssignmentType) => {
+    const draggableId = getDraggableId(student, assignmentType);
     return <Draggable
-      key={student.id}
-      draggableId={student.id.toString()}
+      key={draggableId}
+      draggableId={draggableId}
       index={idx}>
       {(provided, snapshot) => (
-        <span
+        <div
+          className={assignmentType.substring(0, 2)}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           style={provided.draggableProps.style}
         >
           <StudentCard student={student} assignmentType={assignmentType} />
-        </span>
+        </div>
       )}
     </Draggable>;
   }
 
   // sketchy
-  const getDroppable = (event: SciolyEvent, column: 'event' | 'quality') => {
+  const getDroppable = (event: SciolyEvent, column: 'es' | 'qc') => {
     const assignmentType = column + event.division as AssignmentType;
     const assignedStudents = students
       .filter(student => {
         return student.assignments[assignmentType] === event.id;
       });
-    const droppableId = getDroppableId(event, column === 'quality');
+    const droppableId = getDroppableId(event, column === 'qc');
 
     return <Droppable
       droppableId={droppableId}
+      type={column}
     >
       {(provided, snapshot) => (
         <div
@@ -106,9 +111,9 @@ const AssignmentTable = ({ division }: AssignmentTableProps) => {
             .sort((e1, e2) => e1.name.charCodeAt(0) - e2.name.charCodeAt(0))
             .map(event => {
               return <tr key={event.id}>
-                <td>{<button onClick={() => setSelectedEvent(event.id)}>{event.name}</button>}</td>
-                <td>{getDroppable(event, "event")}</td>
-                <td>{getDroppable(event, "quality")}</td>
+                <td>{<EventCard event={event} />}</td>
+                <td>{getDroppable(event, "es")}</td>
+                <td>{getDroppable(event, "qc")}</td>
               </tr>
             })
         }
@@ -117,4 +122,4 @@ const AssignmentTable = ({ division }: AssignmentTableProps) => {
   </DragDropContext>
 }
 
-export default AssignmentTable;
+export default AssignmentsTable;

@@ -2,7 +2,8 @@ import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
 import { SciolyEvent } from "SciolyEvent";
 import { Student } from "Student";
 import { useContext } from "react";
-import { AssignmentType, Division } from "types";
+import { AssignmentType } from "types";
+import { getDivision, isQC } from "utils";
 
 const AutoAssignControls = () => {
     const { events, students, setStudents } = useContext(
@@ -16,14 +17,22 @@ const AutoAssignControls = () => {
         const maxStudentsPerEvent = 2;
         let freeStudents = Student.getCopy(students);
         let assignedStudents: Student[] = [];
-        const division = assignmentType.slice(-1) as Division;
+        const division = getDivision(assignmentType);
 
         const possibleEventsByStudent = new Map<number, number[]>();
         for (const student of freeStudents) {
             possibleEventsByStudent.set(student.id, student.getPreferenceList(events, division));
         }
 
-        // TODO remove assigned events when assigning QC
+        // remove assigned events when assigning QC
+        if (isQC(assignmentType)) {
+            if (log) console.log('remove assigned events to prepare to assign QC');
+            for (const student of freeStudents) {
+                const assignedEventId = student.assignments[('es' + division) as AssignmentType];
+                const prefList = possibleEventsByStudent.get(student.id);
+                possibleEventsByStudent.set(student.id, prefList!.filter(eid => eid !== assignedEventId));
+            }
+        }
 
         while (freeStudents.length > 0) {
             // get next free supervisor
@@ -38,14 +47,14 @@ const AutoAssignControls = () => {
             if (log) console.log(`${sup.name} is free, top pref is ${eid}`);
 
             // find current supervisors of that event, if any
-            const currentSupervisors = assignedStudents.filter(student => student.assignments.eventC === eid);
+            const currentSupervisors = assignedStudents.filter(student => student.assignments[assignmentType] === eid);
             if (log) console.log(`currentSupervisors: ${currentSupervisors.map(student => student.name)}`)
 
             // if event doesn't have max supervisors yet, add them
             if (currentSupervisors.length < maxStudentsPerEvent) {
                 if (log) console.log(`${eid} doesn't have max sups yet, assigning ${sup.name}`)
                 // assign free sup
-                sup.assignments.eventC = eid;
+                sup.assignments[assignmentType] = eid;
                 freeStudents = freeStudents.filter(student => student.id !== sup.id);
                 assignedStudents.push(sup);
             }
@@ -62,11 +71,11 @@ const AutoAssignControls = () => {
                     if (supPref <= currentSupPref && supPickiness > currentSupPickiness) {
                         if (log) console.log(`swapping ${currentSup.name} for ${sup.name}`);
                         // remove current sup
-                        currentSup.assignments.eventC = undefined;
+                        currentSup.assignments[assignmentType] = undefined;
                         assignedStudents = assignedStudents.filter(student => student.id !== currentSup.id);
                         freeStudents.push(currentSup);
                         // assign sup
-                        sup.assignments.eventC = eid;
+                        sup.assignments[assignmentType] = eid;
                         freeStudents = freeStudents.filter(student => student.id !== sup.id);
                         assignedStudents.push(sup);
                         break;
@@ -83,24 +92,27 @@ const AutoAssignControls = () => {
 
         // TODO fill in events that don't have supervisors
 
-        const logResults = false;
+        const logResults = true;
         if (logResults) {
             for (const student of assignedStudents) {
-                const eid = student.assignments[assignmentType];
-                console.log(`${student.name} - ${eid} ${SciolyEvent.getEventByID(events, eid!).name}`);
+                console.log(`${student.name} - ${student.assignments.esC} - ${student.assignments.qcC}`);
             }
         }
         return assignedStudents;
     }
 
-    const autoAssign = (assignmentType: AssignmentType) => {
+    const autoAssign = (students: Student[], assignmentType: AssignmentType) => {
+        console.log('-------ASSIGNING ' + assignmentType);
         const assignedStudents = getAutoAssignments(students, events, assignmentType);
-        setStudents(assignedStudents);
+        return assignedStudents;
     }
 
     return <div>
-        <button onClick={() => autoAssign('eventC')}>Auto-assign C</button>
-        <button onClick={() => autoAssign('eventB')}>Auto-assign B</button>
+        <button onClick={() => {
+            const esAssignedStudents = autoAssign(students, 'esC');
+            const qcAssignedStudents = autoAssign(esAssignedStudents, 'qcC');
+            setStudents(qcAssignedStudents);
+        }}>Auto-assign C</button>
     </div>
 }
 

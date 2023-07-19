@@ -13,11 +13,11 @@ const StudentTable = () => {
     <div className="half">
       <h2>Students</h2>
       <div className="table">
-        {(students).filter(student => student.assignments.eventC === undefined)
+        {(students).filter(student => student.assignments.esC === undefined)
           .map((student) => {
             const sid = student.id;
             return (
-              <StudentCard key={sid} student={student} assignmentType="eventC" />
+              <StudentCard key={sid} student={student} assignmentType="esC" />
             );
           })}
       </div>
