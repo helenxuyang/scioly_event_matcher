@@ -9,19 +9,20 @@ import AddIcon from '@mui/icons-material/Add';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { SciolyEvent } from "SciolyEvent";
 
+import "./Student.css";
+import { AssignmentType } from "types";
+
 type StudentCardProps = {
   student: Student;
+  assignmentType: AssignmentType;
 };
 
-export const StudentCard = ({ student }: StudentCardProps) => {
-  const { dispatchUpdateAssignments: dispatchUpdateAssignment, selectedEvent, events, getAssignedEid, division } = useContext(
+export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
+  const { events, division, selectedEvent } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
   const [expanded, setExpanded] = useState(false);
-  const currentEvent = getAssignedEid(student.id);
-  const hasCurrentEvent = currentEvent !== undefined;
-  const hasSelectedEvent = selectedEvent !== undefined;
 
   const getPrefsList = () => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((rating) => {
@@ -36,20 +37,24 @@ export const StudentCard = ({ student }: StudentCardProps) => {
     });
   };
 
-  const currentEventRating =
-    (currentEvent === undefined ? undefined : student.prefs.get(currentEvent));
+  const currentEvent = student.assignments[assignmentType];
+  const hasCurrentEvent = currentEvent !== undefined;
+  const hasSelectedEvent = selectedEvent !== undefined;
 
+  const currentEventRating =
+    (hasCurrentEvent ? student.prefs.get(currentEvent) : undefined);
   const selectedEventRating =
-    (selectedEvent === undefined ? undefined : student.prefs.get(selectedEvent));
+    (hasSelectedEvent ? student.prefs.get(selectedEvent) : undefined);
+
 
   const backgroundColor = () => {
-    if (currentEventRating === undefined) {
-      if (selectedEventRating !== undefined) {
-        return getRatingColor(selectedEventRating);
-      }
-      return "darkblue";
+    if (selectedEventRating !== undefined) {
+      return getRatingColor(selectedEventRating);
     }
-    return getRatingColor(currentEventRating);
+    if (currentEventRating !== undefined) {
+      return getRatingColor(currentEventRating);
+    }
+    return "darkblue";
   };
 
   const getBorder = () => {
@@ -60,9 +65,6 @@ export const StudentCard = ({ student }: StudentCardProps) => {
   };
 
   const getExpandOrCollapseIcon = () => {
-    if (hasCurrentEvent || hasSelectedEvent) {
-      return;
-    }
     if (expanded) {
       return <KeyboardArrowUpIcon fontSize="small" />;
     }
@@ -83,37 +85,35 @@ export const StudentCard = ({ student }: StudentCardProps) => {
     }
   }
 
-  const handleClick = () => {
-    if (selectedEvent === undefined && currentEvent === undefined) {
-      setExpanded(expanded => !expanded);
-    }
-    else {
-      dispatchUpdateAssignment({ sid: student.id, currentEvent: getAssignedEid(student.id), selectedEvent });
-    }
-  };
+  // const handleClick = () => {
+  //   if (selectedEvent === undefined && currentEvent === undefined) {
+  //     setExpanded(expanded => !expanded);
+  //   }
+  //   else {
+  //     dispatchUpdateAssignments({ sid: student.id, currentEvent: getAssignedEid(student.id), selectedEvent });
+  //   }
+  // };
 
   return (
-    <button
+    <div
       key={student.id}
       className="student-card"
       style={{
         backgroundColor: backgroundColor(),
         border: getBorder(),
       }}
-      onClick={() => handleClick()}
+      onClick={() => setExpanded(expanded => !expanded)}
       onContextMenu={(event) => {
         event.preventDefault();
         setExpanded(expanded => !expanded);
       }}
-
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {getLeftIcon()}
-        <strong className="student-name">{student.name}</strong>
         {getExpandOrCollapseIcon()}
+        <strong className="student-name">{student.name}</strong>
         {hasCurrentEvent && <span className="current-event-rating">({currentEventRating})</span>}
       </div>
       {expanded && getPrefsList()}
-    </button>
+    </div>
   );
 };

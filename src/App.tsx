@@ -5,6 +5,7 @@ import AssignmentImporter from "AssignmentImporter";
 import PreferencesImporter from "PreferencesImporter";
 import { AssignmentsProvider } from "AssignmentsContext";
 import AutoAssignControls from "AutoAssign";
+import AssignmentTable from "AssignmentTable";
 
 function App() {
   return (
@@ -20,10 +21,13 @@ function App() {
         <div className="auto-assign">
           <AutoAssignControls />
         </div>
-        <div className="table-holder">
+        <div>
+          <AssignmentTable division="C" />
+        </div>
+        {/* <div className="table-holder">
           <EventTable />
           <StudentTable />
-        </div>
+        </div> */}
       </AssignmentsProvider>
     </div>
   );

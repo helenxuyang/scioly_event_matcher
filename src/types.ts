@@ -6,7 +6,7 @@ type StudentAssignments = {
     qualityB: number | undefined;
 }
 
-type AssignmentType = 'C_EVENT' | 'B_EVENT' | 'C_QUALITY' | 'B_QUALITY';
+type AssignmentType = 'eventC' | 'eventB' | 'qualityC' | 'qualityB';
 
 
 export type { Division, StudentAssignments, AssignmentType };

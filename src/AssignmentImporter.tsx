@@ -3,7 +3,6 @@ import { SciolyEvent } from 'SciolyEvent';
 import { Student } from 'Student';
 import { useContext } from 'react';
 import CSVReader from 'react-csv-reader'
-import { getAutoAssignments } from 'utils';
 
 const AssignmentsImporter = () => {
   return <div>

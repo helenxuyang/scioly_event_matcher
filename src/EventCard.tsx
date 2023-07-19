@@ -7,15 +7,15 @@ import { useContext } from "react";
 
 type EventCardProps = {
   event: SciolyEvent;
-  sids: number[]; // IDs of assigned students
 };
 
-export const EventCard = ({ event, sids }: EventCardProps) => {
-  const { selectedEvent, setSelectedEvent, students } = useContext(
+export const EventCard = ({ event }: EventCardProps) => {
+  const { students } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
-  const assignedStudents = students.filter(student => sids.includes(student.id));
+  // TODO fix
+  const assignedStudents = students.filter(student => student.assignments['eventC'] === student.id);
 
   const ratingInfo = () => {
     const freqs = event.getRatingFreqs(students, 5);
@@ -44,11 +44,9 @@ export const EventCard = ({ event, sids }: EventCardProps) => {
     // style={{ backgroundColor: assignedStudents.length === 0 ? "lightcoral" : "white" }}
     >
       <button
-        style={{
-          backgroundColor: selectedEvent === event.id ? "gold" : "white",
-        }}
-        onClick={() =>
-          setSelectedEvent(selectedEvent === event.id ? undefined : event.id)
+        // TODO: update
+        onClick={() => { }
+          // setSelectedEvent(selectedEvent === event.id ? undefined : event.id)
         }
       >
         <strong className="event-name">{`${event.name} ${event.division}`}</strong>
@@ -58,10 +56,12 @@ export const EventCard = ({ event, sids }: EventCardProps) => {
       <div className="assigned-list">
         {assignedStudents.map((student) => {
           return (
-            <StudentCard
-              key={"assigned" + student.id}
-              student={student}
-            />
+            // TODO: update
+            <span></span>
+            // <StudentCard
+            //   key={"assigned" + student.id}
+            //   student={student}
+            // />
           );
         })}
       </div>

@@ -5,7 +5,7 @@ import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
 import { SciolyEvent } from "SciolyEvent";
 
 const EventTable = () => {
-  const { assignments, events, division, setDivision } = useContext(
+  const { events, division, setDivision } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
@@ -38,7 +38,6 @@ const EventTable = () => {
               <EventCard
                 key={eid}
                 event={event}
-                sids={assignments.get(eid) ?? []}
               />
             );
           })}

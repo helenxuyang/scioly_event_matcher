@@ -1,5 +1,5 @@
 import { SciolyEvent } from "SciolyEvent";
-import { AssignmentType, StudentAssignments } from "types";
+import { AssignmentType, Division, StudentAssignments } from "types";
 
 export class Student {
   id: number;
@@ -40,7 +40,7 @@ export class Student {
   static getStudentByID(students: Student[], id: number) {
     return students.filter(student => student.id === id)[0];
   }
-  getPreferenceList(events: SciolyEvent[], division: 'B' | 'C') {
+  getPreferenceList(events: SciolyEvent[], division: Division) {
     const sortedEvents = events.filter(event => event.division === division)
       .sort((event1, event2) => {
         return (this.prefs.get(event1.id)!) - (this.prefs.get(event2.id)!)
