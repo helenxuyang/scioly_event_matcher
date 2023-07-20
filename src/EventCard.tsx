@@ -1,5 +1,4 @@
 import "./SciolyEvent.css";
-import { StudentCard } from "StudentCard";
 import { SciolyEvent } from "SciolyEvent";
 import { getRatingColor } from "utils";
 import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
@@ -47,6 +46,7 @@ export const EventCard = ({ event }: EventCardProps) => {
 
       >
         <strong className="event-name">{`${event.name} ${event.division}`}</strong>
+        <br />
         {ratingInfo()}
       </button>
     </div>

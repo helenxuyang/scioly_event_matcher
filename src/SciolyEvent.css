@@ -14,12 +14,8 @@
 }
 
 .event-card {
-    background-color: white;
-    padding: 16px;
     display: block;
     border: none;
-    margin-top: 8px;
-    margin-bottom: 8px;
 }
 
 .event-name {
@@ -31,4 +27,8 @@
 .table-button {
     margin-left: 2px;
     margin-right: 2px;
+}
+
+button {
+    width: 200px;
 }

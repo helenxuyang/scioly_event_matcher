@@ -103,10 +103,6 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
         border: getBorder(),
       }}
       onClick={() => setExpanded(expanded => !expanded)}
-      onContextMenu={(event) => {
-        event.preventDefault();
-        setExpanded(expanded => !expanded);
-      }}
     >
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {getExpandOrCollapseIcon()}

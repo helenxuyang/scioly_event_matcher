@@ -1,8 +1,5 @@
 import "./App.css";
-import StudentTable from "StudentTable";
-import EventTable from "EventTable";
-import AssignmentImporter from "AssignmentImporter";
-import PreferencesImporter from "PreferencesImporter";
+import SurveyImporter from "SurveyImporter";
 import { AssignmentsProvider } from "AssignmentsContext";
 import AutoAssignControls from "AutoAssign";
 import AssignmentsTable from "AssignmentsTable";
@@ -12,22 +9,18 @@ function App() {
 
     <div className="App">
       <AssignmentsProvider>
+        <h2>Import Survey</h2>
         <div className="importer-holder">
-          <PreferencesImporter />
+          <SurveyImporter />
         </div>
-        {/* <div className="importer-holder">
-          <AssignmentImporter />
-        </div> */}
+        <h2>Event Assignments</h2>
         <div className="auto-assign">
           <AutoAssignControls />
         </div>
-        <div>
+        <div className="table-holder">
           <AssignmentsTable division="C" />
+          <AssignmentsTable division="B" />
         </div>
-        {/* <div className="table-holder">
-          <EventTable />
-          <StudentTable />
-        </div> */}
       </AssignmentsProvider>
     </div>
   );

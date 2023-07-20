@@ -109,10 +109,12 @@ const AutoAssignControls = () => {
 
     return <div>
         <button onClick={() => {
-            const esAssignedStudents = autoAssign(students, 'esC');
-            const qcAssignedStudents = autoAssign(esAssignedStudents, 'qcC');
-            setStudents(qcAssignedStudents);
-        }}>Auto-assign C</button>
+            let assignedStudents = autoAssign(students, 'esC');
+            assignedStudents = autoAssign(assignedStudents, 'qcC');
+            assignedStudents = autoAssign(assignedStudents, 'esB');
+            assignedStudents = autoAssign(assignedStudents, 'qcB');
+            setStudents(assignedStudents);
+        }}>Auto-assign</button>
     </div>
 }
 

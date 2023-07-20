@@ -31,7 +31,7 @@ const getDraggableId = (student: Student, assignmentType: AssignmentType) => {
 }
 
 const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
-  const { events, students, updateAssignment, setSelectedEvent } = useContext(
+  const { events, students, updateAssignment } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
@@ -43,7 +43,7 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
       index={idx}>
       {(provided, snapshot) => (
         <div
-          className={assignmentType.substring(0, 2)}
+          className={assignmentType}
           ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
@@ -55,7 +55,6 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
     </Draggable>;
   }
 
-  // sketchy
   const getDroppable = (event: SciolyEvent, column: 'es' | 'qc') => {
     const assignmentType = column + event.division as AssignmentType;
     const assignedStudents = students
@@ -66,7 +65,8 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
 
     return <Droppable
       droppableId={droppableId}
-      type={column}
+      type={assignmentType}
+
     >
       {(provided, snapshot) => (
         <div
@@ -74,6 +74,7 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
           {...provided.droppableProps}
         >
           {assignedStudents.map((student, idx) => getDraggable(student, idx, assignmentType))}
+          {assignedStudents.length === 0 ? <p>None</p> : undefined}
           {provided.placeholder}
         </div>
       )}
@@ -95,7 +96,11 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
 
   console.log('render assignment table');
   return <DragDropContext
-    onDragEnd={handleDragEnd}>
+    onDragEnd={handleDragEnd}
+    onDragUpdate={(update, provided) => {
+      console.log(update);
+    }}
+  >
     <table>
       <thead>
         <tr>
