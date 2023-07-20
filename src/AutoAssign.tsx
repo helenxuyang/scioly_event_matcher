@@ -6,7 +6,7 @@ import { AssignmentType } from "types";
 import { getDivision, isQC } from "utils";
 
 const AutoAssignControls = () => {
-    const { events, students, setStudents } = useContext(
+    const { events, students, setStudents, maxStudentsPerEvent } = useContext(
         AssignmentsContext
     ) as AssignmentsContextType;
 
@@ -14,7 +14,6 @@ const AutoAssignControls = () => {
     const getAutoAssignments = (students: Student[], events: SciolyEvent[], assignmentType: AssignmentType) => {
         const log = false;
         if (log) console.log('assignStudents');
-        const maxStudentsPerEvent = 2;
         let freeStudents = Student.getCopy(students);
         let assignedStudents: Student[] = [];
         const division = getDivision(assignmentType);

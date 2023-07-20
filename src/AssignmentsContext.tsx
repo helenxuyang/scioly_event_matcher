@@ -14,6 +14,7 @@ export type AssignmentsContextType = {
   selectedEvent: number | undefined;
   setSelectedEvent: (eid: number | undefined) => void;
   updateAssignment: (sid: number, eid: number | undefined, assignmentType: AssignmentType) => void;
+  maxStudentsPerEvent: number;
 };
 
 export const AssignmentsContext = createContext<AssignmentsContextType | null>(
@@ -39,6 +40,8 @@ export const AssignmentsProvider = (props: any) => {
     setStudents(newStudents);
   };
 
+  const maxStudentsPerEvent = 2;
+
   return (
     <AssignmentsContext.Provider
       value={{
@@ -50,7 +53,8 @@ export const AssignmentsProvider = (props: any) => {
         setDivision,
         selectedEvent,
         setSelectedEvent,
-        updateAssignment
+        updateAssignment,
+        maxStudentsPerEvent
       }}
     >
       {props.children}

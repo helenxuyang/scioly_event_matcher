@@ -4578,6 +4578,11 @@ expect@^29.0.0:
     jest-message-util "^29.0.3"
     jest-util "^29.0.3"
 
+export-to-csv@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/export-to-csv/-/export-to-csv-0.2.1.tgz"
+  integrity sha512-KTbrd3CAZ0cFceJEZr1e5uiMasabeCpXq1/5uvVxDl53o4jXJHnltasQoj2NkzrxD8hU9kdwjnMhoir/7nNx/A==
+
 express@^4.17.3:
   version "4.18.1"
   resolved "https://registry.npmjs.org/express/-/express-4.18.1.tgz"

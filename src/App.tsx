@@ -3,6 +3,7 @@ import SurveyImporter from "SurveyImporter";
 import { AssignmentsProvider } from "AssignmentsContext";
 import AutoAssignControls from "AutoAssign";
 import AssignmentsTable from "AssignmentsTable";
+import AssignmentsExporter from "AssignmentsExporter";
 
 function App() {
   return (
@@ -21,6 +22,8 @@ function App() {
           <AssignmentsTable division="C" />
           <AssignmentsTable division="B" />
         </div>
+        <h2>Export Assignments</h2>
+        <AssignmentsExporter />
       </AssignmentsProvider>
     </div>
   );
