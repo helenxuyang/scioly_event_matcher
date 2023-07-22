@@ -43,11 +43,11 @@ export const EventCard = ({ event }: EventCardProps) => {
           setSelectedEvent(selectedEvent === event.id ? undefined : event.id)
         }}
         style={{ backgroundColor: (selectedEvent === event.id ? 'gold' : 'white') }}
-
       >
         <strong className="event-name">{`${event.name} ${event.division}`}</strong>
         <br />
         {ratingInfo()}
+        {event.id}
       </button>
     </div>
   );

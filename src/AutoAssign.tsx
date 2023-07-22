@@ -10,7 +10,7 @@ const AutoAssignControls = () => {
     AssignmentsContext
   ) as AssignmentsContextType;
 
-  const getAutoAssignments = (students: Student[], events: SciolyEvent[], assignmentType: AssignmentType) => {
+  const autoAssign = (students: Student[], events: SciolyEvent[], assignmentType: AssignmentType) => {
     const log = true;
     if (log) console.log('------assignStudents ' + assignmentType);
     let freeStudents = Student.getCopy(students);
@@ -67,7 +67,7 @@ const AutoAssignControls = () => {
           const currentSupPickiness = currentSup.getPickiness();
 
           // reassign if the free supervisor has same/better rating and is more picky than an assigned sup
-          if (supPref < currentSupPref) {
+          if (supPref < currentSupPref || (supPref === currentSupPref && supPickiness > currentSupPickiness)) {
             if (log) console.log(`swapping ${currentSup.name} for ${sup.name}`);
             // remove current sup
             currentSup.assignments[assignmentType] = undefined;
@@ -88,32 +88,37 @@ const AutoAssignControls = () => {
         }
       }
     }
+    return assignedStudents;
+  }
 
-    // attempt to assign events with no students; kind of sketchy right now
-    const tryToFill = true;
-    const logFill = false;
-    if (tryToFill) {
-      checkEmptyEvents: for (const event of eventsInDivision) {
-        const currentSupervisors = assignedStudents.filter(student => student.assignments[assignmentType] === event.id);
-        // if an event doesn't have supervisors
-        if (currentSupervisors.length > 0) {
-          if (logFill) console.log(`${event.name} has ${currentSupervisors.length} students`);
-        }
-        else {
-          if (logFill) console.log(`${event.name} doesn't have assigned students`);
-          for (const otherEvent of eventsInDivision) {
-            const otherEventSupervisors = assignedStudents.filter(student => student.assignments[assignmentType] === otherEvent.id);
-            if (otherEventSupervisors.length > 1) {
-              for (const sup of otherEventSupervisors) {
-                const otherAssignmentType: AssignmentType = (isQC(assignmentType) ? 'es' : 'qc' + division) as AssignmentType;
-                const notAlreadyAssigned = sup.assignments[otherAssignmentType] !== event.id;
-                const okayToSwitch = sup.prefs.get(event.id)! <= sup.prefs.get(otherEvent.id)!
-                // prevent someone ESing the event to get assigned to QC it and vice versa
-                if (notAlreadyAssigned && okayToSwitch) {
-                  if (logFill) console.log(`re-assigning ${sup.name} to ${event.name}`);
-                  sup.assignments[assignmentType] = event.id;
-                  continue checkEmptyEvents; // TECHDEBT: awful, avoid this continue and outer loop stuff
-                }
+  const fillEmptyAssignments = (students: Student[], events: SciolyEvent[], assignmentType: AssignmentType) => {
+    let studentsCopy = Student.getCopy(students);
+
+    const division = getDivision(assignmentType);
+    const eventsInDivision = events.filter(event => event.division === division);
+    const logFill = true;
+    if (logFill) console.log('------attempt to fill for ' + assignmentType);
+
+    checkEmptyEvents: for (const event of eventsInDivision) {
+      const currentSupervisors = studentsCopy.filter(student => student.assignments[assignmentType] === event.id);
+      // if an event doesn't have supervisors
+      if (currentSupervisors.length === 0) {
+        if (logFill) console.log(`${event.name} doesn't have assigned students`);
+        // check other events with multiple supervisors
+        for (const otherEvent of eventsInDivision) {
+          const possibleSups = studentsCopy.filter(student => student.assignments[assignmentType] === otherEvent.id);
+          if (possibleSups.length > 1) {
+            if (logFill) console.log(`check students from ${otherEvent.name}: ${possibleSups.map(sup => sup.name)}`);
+            // find students who can switch: not already assigned (can't ES and QC same event), same or better rating
+            for (const sup of possibleSups) {
+              const otherAssignmentType: AssignmentType = (isQC(assignmentType) ? 'es' : 'qc' + division) as AssignmentType;
+              const notAlreadyAssigned = sup.assignments[otherAssignmentType] !== event.id;
+              const okayToSwitch = sup.prefs.get(event.id)! <= sup.prefs.get(otherEvent.id)!
+              if (notAlreadyAssigned && okayToSwitch) {
+                if (logFill) console.log(`re-assigning ${sup.name} from ${otherEvent.name} (${sup.prefs.get(otherEvent.id)})} to ${event.name} (${sup.prefs.get(event.id)})`);
+                sup.assignments[assignmentType] = event.id;
+                console.log(sup.assignments[assignmentType]);
+                continue checkEmptyEvents; // TECHDEBT: awful, avoid this continue and outer loop stuff
               }
             }
             if (logFill) console.log(`didn't find any good swaps for ${event.name}`);
@@ -121,20 +126,20 @@ const AutoAssignControls = () => {
         }
       }
     }
-    return assignedStudents;
+    return studentsCopy;
   }
 
-  const autoAssign = (students: Student[], assignmentType: AssignmentType) => {
-    const assignedStudents = getAutoAssignments(students, events, assignmentType);
-    return assignedStudents;
-  }
 
   return <div>
     <button onClick={() => {
-      let assignedStudents = autoAssign(students, 'esC');
-      assignedStudents = autoAssign(assignedStudents, 'qcC');
-      assignedStudents = autoAssign(assignedStudents, 'esB');
-      assignedStudents = autoAssign(assignedStudents, 'qcB');
+      let assignedStudents = autoAssign(students, events, 'esC');
+      assignedStudents = autoAssign(assignedStudents, events, 'qcC');
+      assignedStudents = autoAssign(assignedStudents, events, 'esB');
+      assignedStudents = autoAssign(assignedStudents, events, 'qcB');
+      assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esC');
+      assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcC');
+      assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esB');
+      assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcB');
       setStudents(assignedStudents);
     }}>Auto-assign</button>
   </div>

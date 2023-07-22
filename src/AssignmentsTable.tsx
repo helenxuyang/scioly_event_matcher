@@ -111,7 +111,15 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
         <tbody>
           {
             events.filter(event => event.division === division)
-              .sort((e1, e2) => e1.name.charCodeAt(0) - e2.name.charCodeAt(0))
+              .sort((e1, e2) => {
+                if (e1.name > e2.name) {
+                  return 1;
+                }
+                if (e2.name > e1.name) {
+                  return -1;
+                }
+                return 0;
+              })
               .map(event => {
                 return <tr key={event.id}>
                   <td>{<EventCard event={event} />}</td>
