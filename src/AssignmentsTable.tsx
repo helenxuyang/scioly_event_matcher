@@ -82,7 +82,6 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
   }
 
   const handleDragEnd = (result: DropResult) => {
-    console.log('handleDragEnd', result);
     const { destination } = result;
     if (!destination) {
       return;
@@ -95,36 +94,39 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
   }
 
   console.log('render assignment table');
-  return <DragDropContext
-    onDragEnd={handleDragEnd}
-    onDragUpdate={(update, provided) => {
-      console.log(update);
-    }}
-  >
-    <table>
-      <thead>
-        <tr>
-          <th>Event</th>
-          <th>ES</th>
-          <th>QC</th>
-        </tr>
+  return <div className="assignment-table">
+    <h2>Division {division}</h2>
+    <DragDropContext
+      onDragEnd={handleDragEnd}
+      onDragUpdate={(update, provided) => {
+        console.log(update);
+      }}
+    >
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>ES</th>
+            <th>QC</th>
+          </tr>
 
-      </thead>
-      <tbody>
-        {
-          events.filter(event => event.division === division)
-            .sort((e1, e2) => e1.name.charCodeAt(0) - e2.name.charCodeAt(0))
-            .map(event => {
-              return <tr key={event.id}>
-                <td>{<EventCard event={event} />}</td>
-                <td>{getDroppable(event, "es")}</td>
-                <td>{getDroppable(event, "qc")}</td>
-              </tr>
-            })
-        }
-      </tbody>
-    </table>
-  </DragDropContext>
+        </thead>
+        <tbody>
+          {
+            events.filter(event => event.division === division)
+              .sort((e1, e2) => e1.name.charCodeAt(0) - e2.name.charCodeAt(0))
+              .map(event => {
+                return <tr key={event.id}>
+                  <td>{<EventCard event={event} />}</td>
+                  <td>{getDroppable(event, "es")}</td>
+                  <td>{getDroppable(event, "qc")}</td>
+                </tr>
+              })
+          }
+        </tbody>
+      </table>
+    </DragDropContext>
+  </div>
 }
 
 export default AssignmentsTable;

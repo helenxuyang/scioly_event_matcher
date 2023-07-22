@@ -3,7 +3,7 @@
 }
 
 .rating-count {
-    font-size: 12px;
+    font-size: 10px;
     display: inline-block;
     width: 12px;
     text-align: center;
@@ -13,22 +13,12 @@
     padding: 4px;
 }
 
-.event-card {
-    display: block;
-    border: none;
-}
-
 .event-name {
     font-size: 18px;
     margin: 8px;
     line-height: 24px;
 }
 
-.table-button {
-    margin-left: 2px;
-    margin-right: 2px;
-}
-
-button {
-    width: 200px;
+.assignment-table {
+    max-width: 800px;
 }

@@ -1,12 +1,9 @@
 import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
 import { useContext, useState } from "react";
 import { Student } from "Student";
-import { getRatingColor } from "utils";
+import { getDivision, getRatingColor } from "utils";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import CloseIcon from '@mui/icons-material/Close';
-import AddIcon from '@mui/icons-material/Add';
-import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { SciolyEvent } from "SciolyEvent";
 
 import "./Student.css";
@@ -18,7 +15,7 @@ type StudentCardProps = {
 };
 
 export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
-  const { events, division, selectedEvent } = useContext(
+  const { events, selectedEvent } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
@@ -26,7 +23,7 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
 
   const getPrefsList = () => {
     return Array.from({ length: 5 }, (_, i) => i + 1).map((rating) => {
-      const eventsWithRating = student.getEventsWithRating(rating, SciolyEvent.getEventsByDivision(events, division));
+      const eventsWithRating = student.getEventsWithRating(rating, SciolyEvent.getEventsByDivision(events, getDivision(assignmentType)));
       return (
         eventsWithRating.length > 0 && (
           <p className="events-list" key={"rating" + rating}>
@@ -37,28 +34,20 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
     });
   };
 
-  const currentEvent = student.assignments[assignmentType];
-  const hasCurrentEvent = currentEvent !== undefined;
+  const currentEvent = student.assignments[assignmentType]!;
   const hasSelectedEvent = selectedEvent !== undefined;
 
-  const currentEventRating =
-    (hasCurrentEvent ? student.prefs.get(currentEvent) : undefined);
+  const currentEventRating = student.prefs.get(currentEvent)!;
   const selectedEventRating =
     (hasSelectedEvent ? student.prefs.get(selectedEvent) : undefined);
 
 
   const backgroundColor = () => {
-    if (selectedEventRating !== undefined) {
-      return getRatingColor(selectedEventRating);
-    }
-    if (currentEventRating !== undefined) {
-      return getRatingColor(currentEventRating);
-    }
-    return "darkblue";
+    return getRatingColor(currentEventRating);
   };
 
   const getBorder = () => {
-    if (hasCurrentEvent && hasSelectedEvent) {
+    if (hasSelectedEvent) {
       return `4px solid ${getRatingColor(selectedEventRating!)}`;
     }
     return undefined;
@@ -73,27 +62,6 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
     }
   }
 
-  const getLeftIcon = () => {
-    if (hasCurrentEvent) {
-      if (hasSelectedEvent && (currentEvent !== selectedEvent)) {
-        return <SwapVertIcon fontSize="small" />;
-      }
-      return <CloseIcon fontSize="small" />;
-    }
-    else if (hasSelectedEvent) {
-      return <AddIcon fontSize="small" />;
-    }
-  }
-
-  // const handleClick = () => {
-  //   if (selectedEvent === undefined && currentEvent === undefined) {
-  //     setExpanded(expanded => !expanded);
-  //   }
-  //   else {
-  //     dispatchUpdateAssignments({ sid: student.id, currentEvent: getAssignedEid(student.id), selectedEvent });
-  //   }
-  // };
-
   return (
     <div
       key={student.id}
@@ -107,7 +75,7 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {getExpandOrCollapseIcon()}
         <strong className="student-name">{student.name}</strong>
-        {hasCurrentEvent && <span className="current-event-rating">({currentEventRating})</span>}
+        <span className="current-event-rating">({currentEventRating})</span>
       </div>
       {expanded && getPrefsList()}
     </div>

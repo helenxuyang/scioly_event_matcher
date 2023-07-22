@@ -11,7 +11,7 @@ type Assignment = {
 }
 
 const AssignmentsExporter = () => {
-  const { events, students, maxStudentsPerEvent } = useContext(
+  const { events, students } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
@@ -37,22 +37,24 @@ const AssignmentsExporter = () => {
   }
 
   let data: any = [];
+  const maxNumES = Math.max(...assignments.map(assignment => assignment.esNames.length));
+  const maxNumQC = Math.max(...assignments.map(assignment => assignment.qcNames.length));
+
   for (const assignment of assignments) {
     let datum: any = {
       Event: assignment.event,
       Division: assignment.division,
     }
-    for (let i = 0; i < maxStudentsPerEvent; i++) {
+    for (let i = 0; i < maxNumES; i++) {
       const name = assignment.esNames[i];
       datum[`ES ${i + 1}`] = name ? name : '';
     }
-    for (let i = 0; i < maxStudentsPerEvent; i++) {
+    for (let i = 0; i < maxNumQC; i++) {
       const name = assignment.qcNames[i];
       datum[`QCer ${i + 1}`] = name ? name : '';
     }
     data.push(datum);
   }
-  console.log(data);
 
   const csvOptions = {
     fieldSeparator: ',',
@@ -64,12 +66,10 @@ const AssignmentsExporter = () => {
     useTextFile: false,
     useBom: true,
     useKeysAsHeaders: true,
-    // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
   };
 
   const exportAssignments = () => {
     const csvExporter = new ExportToCsv(csvOptions);
-    console.log(data);
     csvExporter.generateCsv(data);
   }
 

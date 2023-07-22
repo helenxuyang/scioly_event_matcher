@@ -40,9 +40,15 @@ export class Student {
   static getStudentByID(students: Student[], id: number) {
     return students.filter(student => student.id === id)[0];
   }
-  getPreferenceList(events: SciolyEvent[], division: Division) {
+
+  getPreferenceList(events: SciolyEvent[], students: Student[], division: Division) {
     const sortedEvents = events.filter(event => event.division === division)
       .sort((event1, event2) => {
+        const event1Rating = this.prefs.get(event1.id);
+        const event2Rating = this.prefs.get(event2.id);
+        if (event1Rating === event2Rating) {
+          return event1.getPopularity(students) - event2.getPopularity(students);
+        }
         return (this.prefs.get(event1.id)!) - (this.prefs.get(event2.id)!)
       });
     const eventIDs = sortedEvents.map(event => event.id);
@@ -68,7 +74,4 @@ export class Student {
     }
     return copy;
   }
-
-  // TODO generalize for assignment type
-
 }

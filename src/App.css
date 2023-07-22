@@ -3,27 +3,5 @@ body {
 }
 
 .App {
-  text-align: center;
-  max-width: 1600px;
   margin: 0 24px;
-}
-
-.table-holder {
-  display: flex;
-}
-
-.half {
-  flex: 50%;
-  border: 2px solid black;
-  margin: 4px;
-}
-
-.table {
-  height: 600px;
-  margin: 16px;
-  overflow-y: auto;
-}
-
-.importer-holder {
-  margin: 16px;
 }

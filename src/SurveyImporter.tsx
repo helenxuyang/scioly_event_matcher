@@ -20,7 +20,7 @@ const SurveyImporter = () => {
             const eventWithDiv = headersCopy[i];
 
             if (eventWithDiv.includes('B/C')) {
-              const eventWithoutDiv = eventWithDiv.slice(0, -3);
+              const eventWithoutDiv = eventWithDiv.slice(0, -4);
               // make this one div B
               data[0][i] = `${eventWithoutDiv} B`;
               // add a new column for div C
@@ -46,7 +46,6 @@ const SurveyImporter = () => {
                 const prefs = new Map();
                 for (let i = 1; i < prefsData.length; i++) {
                   const rating = prefsData[i];
-                  console.log(rating);
                   prefs.set(i - 1, rating === '' ? 5 : parseInt(rating))
                 }
                 return new Student(idx, name, prefs);

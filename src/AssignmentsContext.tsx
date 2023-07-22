@@ -33,7 +33,6 @@ export const AssignmentsProvider = (props: any) => {
     eid: number | undefined,
     assignmentType: AssignmentType
   ) => {
-    console.log('updateAssignment', sid, eid, assignmentType);
     const newStudents = Student.getCopy(students);
     const student = newStudents.filter(student => student.id === sid)[0];
     student.assignments[assignmentType] = eid;
