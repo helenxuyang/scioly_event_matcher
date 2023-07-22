@@ -11,15 +11,16 @@ const AutoAssignControls = () => {
   ) as AssignmentsContextType;
 
   const getAutoAssignments = (students: Student[], events: SciolyEvent[], assignmentType: AssignmentType) => {
-    const log = false;
+    const log = true;
     if (log) console.log('------assignStudents ' + assignmentType);
     let freeStudents = Student.getCopy(students);
     let assignedStudents: Student[] = [];
     const division = getDivision(assignmentType);
+    const eventsInDivision = events.filter(event => event.division === division);
 
     const possibleEventsByStudent = new Map<number, number[]>();
     for (const student of freeStudents) {
-      possibleEventsByStudent.set(student.id, student.getPreferenceList(events, students, division));
+      possibleEventsByStudent.set(student.id, student.getPreferenceList(eventsInDivision, students));
     }
 
     // remove assigned events when assigning QC
@@ -66,7 +67,7 @@ const AutoAssignControls = () => {
           const currentSupPickiness = currentSup.getPickiness();
 
           // reassign if the free supervisor has same/better rating and is more picky than an assigned sup
-          if (supPref <= currentSupPref && supPickiness > currentSupPickiness) {
+          if (supPref < currentSupPref) {
             if (log) console.log(`swapping ${currentSup.name} for ${sup.name}`);
             // remove current sup
             currentSup.assignments[assignmentType] = undefined;
@@ -88,30 +89,38 @@ const AutoAssignControls = () => {
       }
     }
 
-    // TODO: attempt to assign events with no students; currently not functional
-    // const tryToFill = true;
-    // if (tryToFill) {
-    //   checkEmptyEvents: for (const event of events.sort((e1, e2) => e1.getPopularity(students) - e2.getPopularity(students))) {
-    //     const currentSupervisors = assignedStudents.filter(student => student.assignments[assignmentType] === event.id);
-    //     // if an event doesn't have supervisors
-    //     if (currentSupervisors.length === 0) {
-    //       console.log(`${event.name} doesn't have assigned students`);
-    //       for (const otherEvent of events) {
-    //         const otherEventSupervisors = assignedStudents.filter(student => student.assignments[assignmentType] === otherEvent.id);
-    //         if (otherEventSupervisors.length > 1) {
-    //           for (const sup of otherEventSupervisors) {
-    //             console.log(`considering ${sup.name} for ${event.name}`);
-    //             if (sup.prefs.get(event.id)! >= sup.prefs.get(otherEvent.id)!) {
-    //               console.log(`re-assigning ${sup.name} to ${event.name}`);
-    //               sup.assignments[assignmentType] = event.id;
-    //               continue checkEmptyEvents;
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+    // attempt to assign events with no students; kind of sketchy right now
+    const tryToFill = true;
+    const logFill = false;
+    if (tryToFill) {
+      checkEmptyEvents: for (const event of eventsInDivision) {
+        const currentSupervisors = assignedStudents.filter(student => student.assignments[assignmentType] === event.id);
+        // if an event doesn't have supervisors
+        if (currentSupervisors.length > 0) {
+          if (logFill) console.log(`${event.name} has ${currentSupervisors.length} students`);
+        }
+        else {
+          if (logFill) console.log(`${event.name} doesn't have assigned students`);
+          for (const otherEvent of eventsInDivision) {
+            const otherEventSupervisors = assignedStudents.filter(student => student.assignments[assignmentType] === otherEvent.id);
+            if (otherEventSupervisors.length > 1) {
+              for (const sup of otherEventSupervisors) {
+                const otherAssignmentType: AssignmentType = (isQC(assignmentType) ? 'es' : 'qc' + division) as AssignmentType;
+                const notAlreadyAssigned = sup.assignments[otherAssignmentType] !== event.id;
+                const okayToSwitch = sup.prefs.get(event.id)! <= sup.prefs.get(otherEvent.id)!
+                // prevent someone ESing the event to get assigned to QC it and vice versa
+                if (notAlreadyAssigned && okayToSwitch) {
+                  if (logFill) console.log(`re-assigning ${sup.name} to ${event.name}`);
+                  sup.assignments[assignmentType] = event.id;
+                  continue checkEmptyEvents; // TECHDEBT: awful, avoid this continue and outer loop stuff
+                }
+              }
+            }
+            if (logFill) console.log(`didn't find any good swaps for ${event.name}`);
+          }
+        }
+      }
+    }
     return assignedStudents;
   }
 

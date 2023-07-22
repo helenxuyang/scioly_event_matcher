@@ -41,8 +41,8 @@ export class Student {
     return students.filter(student => student.id === id)[0];
   }
 
-  getPreferenceList(events: SciolyEvent[], students: Student[], division: Division) {
-    const sortedEvents = events.filter(event => event.division === division)
+  getPreferenceList(events: SciolyEvent[], students: Student[]) {
+    const sortedEvents = events
       .sort((event1, event2) => {
         const event1Rating = this.prefs.get(event1.id);
         const event2Rating = this.prefs.get(event2.id);

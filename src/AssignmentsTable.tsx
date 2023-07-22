@@ -98,9 +98,6 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
     <h2>Division {division}</h2>
     <DragDropContext
       onDragEnd={handleDragEnd}
-      onDragUpdate={(update, provided) => {
-        console.log(update);
-      }}
     >
       <table>
         <thead>

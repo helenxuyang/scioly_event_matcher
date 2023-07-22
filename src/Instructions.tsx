@@ -4,7 +4,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const Instructions = () => {
 
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   return <div style={{ border: '1px solid black' }}>
     <span role="button" style={{ padding: '8px' }} onClick={() => { setExpanded(expanded => !expanded) }}>
       {expanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
