@@ -11,7 +11,7 @@ const AutoAssignControls = () => {
   ) as AssignmentsContextType;
 
   const autoAssign = (students: Student[], events: SciolyEvent[], assignmentType: AssignmentType) => {
-    const log = true;
+    const log = false;
     if (log) console.log('------assignStudents ' + assignmentType);
     let freeStudents = Student.getCopy(students);
     let assignedStudents: Student[] = [];
@@ -96,7 +96,7 @@ const AutoAssignControls = () => {
 
     const division = getDivision(assignmentType);
     const eventsInDivision = events.filter(event => event.division === division);
-    const logFill = true;
+    const logFill = false;
     if (logFill) console.log('------attempt to fill for ' + assignmentType);
 
     checkEmptyEvents: for (const event of eventsInDivision) {

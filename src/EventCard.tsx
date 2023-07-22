@@ -47,7 +47,6 @@ export const EventCard = ({ event }: EventCardProps) => {
         <strong className="event-name">{`${event.name} ${event.division}`}</strong>
         <br />
         {ratingInfo()}
-        {event.id}
       </button>
     </div>
   );

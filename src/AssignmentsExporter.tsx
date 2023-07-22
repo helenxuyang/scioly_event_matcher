@@ -77,7 +77,6 @@ const AssignmentsExporter = () => {
 
     const csvExporter = new ExportToCsv(csvOptions);
     const filteredRows = rows.filter((row: any) => (row.Event as string).slice(-1) === division);
-    console.log(filteredRows);
     csvExporter.generateCsv(filteredRows);
   }
 
