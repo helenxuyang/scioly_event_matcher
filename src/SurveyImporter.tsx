@@ -50,7 +50,6 @@ const SurveyImporter = () => {
                 }
                 return new Student(idx, name, prefs);
               });
-            students.sort((studentA, studentB) => studentB.getPickiness() - studentA.getPickiness());
             setStudents(students);
             setEvents(SciolyEvent.getSortedEventsByDifficulty(events, students));
             console.log(`imported ${students.length} students and ${events.length} events`);

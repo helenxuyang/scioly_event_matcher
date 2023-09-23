@@ -11,12 +11,19 @@ const AutoAssignControls = () => {
   ) as AssignmentsContextType;
 
   const autoAssign = (students: Student[], events: SciolyEvent[], assignmentType: AssignmentType) => {
-    const log = false;
+    const log = true;
+
     if (log) console.log('------assignStudents ' + assignmentType);
-    let freeStudents = Student.getCopy(students);
-    let assignedStudents: Student[] = [];
+
     const division = getDivision(assignmentType);
-    const eventsInDivision = events.filter(event => event.division === division);
+    const eventsInDivision = SciolyEvent.getEventsByDivision(events, division);
+
+    let freeStudents = Student.getCopy(students)
+      .sort((studentA, studentB) => studentB.getPickiness(eventsInDivision) - studentA.getPickiness(eventsInDivision));
+    if (log) console.log('students by pickiness: ', freeStudents.map(stud => stud.name));
+
+    let assignedStudents: Student[] = [];
+
 
     const possibleEventsByStudent = new Map<number, number[]>();
     for (const student of freeStudents) {
@@ -43,7 +50,7 @@ const AutoAssignControls = () => {
         continue;
       }
       const eid = possibleEvents[0];
-      if (log) console.log(`${sup.name} is free, top pref is ${eid}`);
+      if (log) console.log(`${sup.name} is free, top pref is ${SciolyEvent.getEventByID(events, eid).name} (${eid})`);
 
       // find current supervisors of that event, if any
       const currentSupervisors = assignedStudents.filter(student => student.assignments[assignmentType] === eid);
@@ -51,7 +58,7 @@ const AutoAssignControls = () => {
 
       // if event doesn't have max supervisors yet, add them
       if (currentSupervisors.length < maxStudentsPerEvent) {
-        if (log) console.log(`${eid} doesn't have max sups yet, assigning ${sup.name}`)
+        if (log) console.log(`${SciolyEvent.getEventByID(events, eid).name} (${eid}) doesn't have max sups yet, assigning ${sup.name}`)
         // assign free sup
         sup.assignments[assignmentType] = eid;
         freeStudents = freeStudents.filter(student => student.id !== sup.id);
@@ -63,12 +70,12 @@ const AutoAssignControls = () => {
           const currentSup = currentSupervisors[i];
           const supPref = sup.prefs.get(eid)!;
           const currentSupPref = currentSup.prefs.get(eid)!;
-          const supPickiness = sup.getPickiness();
-          const currentSupPickiness = currentSup.getPickiness();
+          const supPickiness = sup.getPickiness(eventsInDivision);
+          const currentSupPickiness = currentSup.getPickiness(eventsInDivision);
 
           // reassign if the free supervisor has same/better rating and is more picky than an assigned sup
           if (supPref < currentSupPref || (supPref === currentSupPref && supPickiness > currentSupPickiness)) {
-            if (log) console.log(`swapping ${currentSup.name} for ${sup.name}`);
+            if (log) console.log(`swapping ${currentSup.name} for ${sup.name} on ${SciolyEvent.getEventByID(events, eid).name} (${eid})`);
             // remove current sup
             currentSup.assignments[assignmentType] = undefined;
             assignedStudents = assignedStudents.filter(student => student.id !== currentSup.id);

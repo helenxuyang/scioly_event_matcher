@@ -19,8 +19,12 @@ export class Student {
     }
   }
 
-  getPickiness() {
-    return [...this.prefs.values()].reduce((prev, curr) => { return prev + curr }, 0);
+  getPickiness(events: SciolyEvent[]) {
+    const eids = events.map(event => event.id);
+    return [...this.prefs.keys()]
+      .filter(eid => eids.includes(eid))
+      .map(eid => this.prefs.get(eid)!)
+      .reduce((prev, curr) => { return prev + curr }, 0);
   }
 
   getEventsWithRating(rating: number, events: SciolyEvent[]) {
