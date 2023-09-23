@@ -21,6 +21,8 @@ const SurveyImporter = () => {
 
             if (eventWithDiv.includes('B/C')) {
               const eventWithoutDiv = eventWithDiv.slice(0, -4);
+              console.log(eventWithoutDiv);
+
               // make this one div B
               data[0][i] = `${eventWithoutDiv} B`;
               // add a new column for div C
@@ -31,12 +33,14 @@ const SurveyImporter = () => {
               }
             }
             const events = data[0]
-              .filter((header) => header !== 'Name')
+              .filter((header) => header !== 'Full Name')
               .map((header, idx) => {
                 const eventName = header.slice(0, -2);
                 const division = header.slice(-1);
                 return new SciolyEvent(idx, eventName, division);
               });
+
+            console.log(events);
 
             // extract students and their event prefs
             const students = data
