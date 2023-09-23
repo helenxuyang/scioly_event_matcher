@@ -42,11 +42,23 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
     (hasSelectedEvent ? student.prefs.get(selectedEvent) : undefined);
 
 
+  const doubleAssigned = () => {
+    if (getDivision(assignmentType) === 'C') {
+      return student.assignments.esC === student.assignments.qcC;
+    }
+    else {
+      return student.assignments.esB === student.assignments.qcB;
+    }
+  }
+
   const backgroundColor = () => {
     return getRatingColor(currentEventRating);
   };
 
   const getBorder = () => {
+    if (doubleAssigned()) {
+      return `8px solid red`;
+    }
     if (hasSelectedEvent) {
       return `4px solid ${getRatingColor(selectedEventRating!)}`;
     }
@@ -77,6 +89,7 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
         <strong className="student-name">{student.name}</strong>
         <span className="current-event-rating">({currentEventRating})</span>
       </div>
+      {doubleAssigned() && <p>⚠ Student is assigned same event for ES and QC</p>}
       {expanded && getPrefsList()}
     </div>
   );

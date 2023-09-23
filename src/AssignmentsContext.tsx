@@ -3,7 +3,6 @@ import { Student } from "Student";
 import { createContext, useState } from "react";
 import { AssignmentType, Division } from "types";
 
-
 export type AssignmentsContextType = {
   students: Student[];
   setStudents: (events: Student[]) => void;
@@ -15,6 +14,7 @@ export type AssignmentsContextType = {
   setSelectedEvent: (eid: number | undefined) => void;
   updateAssignment: (sid: number, eid: number | undefined, assignmentType: AssignmentType) => void;
   maxStudentsPerEvent: number;
+  setMaxStudentsPerEvent: (max: number) => void;
 };
 
 export const AssignmentsContext = createContext<AssignmentsContextType | null>(
@@ -27,6 +27,7 @@ export const AssignmentsProvider = (props: any) => {
   const [events, setEvents] = useState<SciolyEvent[]>([]);
   const [division, setDivision] = useState<Division>('B');
   const [selectedEvent, setSelectedEvent] = useState<number | undefined>();
+  const [maxStudentsPerEvent, setMaxStudentsPerEvent] = useState<number>(3);
 
   const updateAssignment = (
     sid: number,
@@ -38,8 +39,6 @@ export const AssignmentsProvider = (props: any) => {
     student.assignments[assignmentType] = eid;
     setStudents(newStudents);
   };
-
-  const maxStudentsPerEvent = 2;
 
   return (
     <AssignmentsContext.Provider
@@ -53,7 +52,8 @@ export const AssignmentsProvider = (props: any) => {
         selectedEvent,
         setSelectedEvent,
         updateAssignment,
-        maxStudentsPerEvent
+        maxStudentsPerEvent,
+        setMaxStudentsPerEvent
       }}
     >
       {props.children}

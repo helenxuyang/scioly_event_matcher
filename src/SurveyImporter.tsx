@@ -21,8 +21,6 @@ const SurveyImporter = () => {
 
             if (eventWithDiv.includes('B/C')) {
               const eventWithoutDiv = eventWithDiv.slice(0, -4);
-              console.log(eventWithoutDiv);
-
               // make this one div B
               data[0][i] = `${eventWithoutDiv} B`;
               // add a new column for div C
@@ -40,8 +38,6 @@ const SurveyImporter = () => {
                 return new SciolyEvent(idx, eventName, division);
               });
 
-            console.log(events);
-
             // extract students and their event prefs
             const students = data
               .filter((row, idx) => idx !== 0 && row.length > 1)
@@ -57,6 +53,7 @@ const SurveyImporter = () => {
             students.sort((studentA, studentB) => studentB.getPickiness() - studentA.getPickiness());
             setStudents(students);
             setEvents(SciolyEvent.getSortedEventsByDifficulty(events, students));
+            console.log(`imported ${students.length} students and ${events.length} events`);
           }
         }
       }

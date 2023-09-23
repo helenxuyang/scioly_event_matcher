@@ -129,19 +129,28 @@ const AutoAssignControls = () => {
     return studentsCopy;
   }
 
+  const assignAll = () => {
+    let assignedStudents = autoAssign(students, events, 'esC');
+    assignedStudents = autoAssign(assignedStudents, events, 'qcC');
+    assignedStudents = autoAssign(assignedStudents, events, 'esB');
+    assignedStudents = autoAssign(assignedStudents, events, 'qcB');
+    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esC');
+    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcC');
+    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esB');
+    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcB');
+    for (let student of assignedStudents) {
+      for (let key in student.assignments) {
+        if (student.assignments[key as AssignmentType] === undefined) {
+          console.log(`WARNING: ${student.name} is missing a ${key} assignment`);
+        }
+      }
+    }
+    setStudents(assignedStudents);
+    alert(`auto-assigned ${assignedStudents.length} / ${students.length} students`);
+  }
 
   return <div>
-    <button onClick={() => {
-      let assignedStudents = autoAssign(students, events, 'esC');
-      assignedStudents = autoAssign(assignedStudents, events, 'qcC');
-      assignedStudents = autoAssign(assignedStudents, events, 'esB');
-      assignedStudents = autoAssign(assignedStudents, events, 'qcB');
-      assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esC');
-      assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcC');
-      assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esB');
-      assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcB');
-      setStudents(assignedStudents);
-    }}>Auto-assign</button>
+    <button onClick={assignAll}>Auto-assign</button>
   </div>
 }
 
