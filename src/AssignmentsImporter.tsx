@@ -36,7 +36,7 @@ const AssignmentsImporter = () => {
                 if (headerRow[i].includes('ES')) {
                   student.assignments['es' + division as AssignmentType] = event.id;
                 }
-                else if (headerRow[i].includes('ES')) {
+                else if (headerRow[i].includes('QC')) {
                   student.assignments['qc' + division as AssignmentType] = event.id;
                 }
               }
