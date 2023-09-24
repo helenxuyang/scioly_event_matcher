@@ -11,14 +11,15 @@
 .student-card {
     color: white;
     border-radius: 8px;
-    padding: 8px;
-    margin: 8px;
+    padding: 4px;
+    margin: 2px;
     border: none;
+    font-size: 12px;
+    max-width: 200px;
 }
 
 .student-name {
     padding: 0px;
-    font-size: 16px;
 }
 
 .current-event-rating {

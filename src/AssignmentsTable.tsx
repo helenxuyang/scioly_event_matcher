@@ -7,6 +7,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautif
 import { SciolyEvent } from "SciolyEvent";
 import { Student } from "Student";
 import { EventCard } from "EventCard";
+import AutoAssignControls from "AutoAssign";
 
 type AssignmentsTableProps = {
   division: Division,
@@ -93,9 +94,11 @@ const AssignmentsTable = ({ division }: AssignmentsTableProps) => {
     );
   }
 
-  console.log('render assignment table');
   return <div className="assignment-table">
     <h2>Division {division}</h2>
+    <div className="auto-assign">
+      <AutoAssignControls division={division} />
+    </div>
     <DragDropContext
       onDragEnd={handleDragEnd}
     >

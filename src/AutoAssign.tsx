@@ -2,10 +2,14 @@ import { AssignmentsContext, AssignmentsContextType } from "AssignmentsContext";
 import { SciolyEvent } from "SciolyEvent";
 import { Student } from "Student";
 import { useContext } from "react";
-import { AssignmentType } from "types";
+import { AssignmentType, Division } from "types";
 import { getDivision, isQC } from "utils";
 
-const AutoAssignControls = () => {
+type Props = {
+  division: Division;
+}
+
+const AutoAssignControls = ({ division }: Props) => {
   const { events, students, setStudents, maxStudentsPerEvent } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
@@ -136,17 +140,24 @@ const AutoAssignControls = () => {
     return studentsCopy;
   }
 
-  const assignAll = () => {
-    let assignedStudents = autoAssign(students, events, 'esC');
-    assignedStudents = autoAssign(assignedStudents, events, 'qcC');
-    assignedStudents = autoAssign(assignedStudents, events, 'esB');
-    assignedStudents = autoAssign(assignedStudents, events, 'qcB');
-    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esC');
-    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcC');
-    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esB');
-    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcB');
+  const assignDivision = () => {
+    let assignedStudents;
+    if (division === 'C') {
+      assignedStudents = autoAssign(students, events, 'esC');
+      assignedStudents = autoAssign(assignedStudents, events, 'qcC');
+      // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esC');
+      // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcC');
+    }
+    else {
+      assignedStudents = autoAssign(students, events, 'esB');
+      assignedStudents = autoAssign(assignedStudents, events, 'qcB');
+      // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esB');
+      // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcB');
+
+    }
+
     for (let student of assignedStudents) {
-      for (let key in student.assignments) {
+      for (let key in (division === 'C' ? ['esC', 'qcC'] : ['esB', 'qcB'])) {
         if (student.assignments[key as AssignmentType] === undefined) {
           console.log(`WARNING: ${student.name} is missing a ${key} assignment`);
         }
@@ -157,7 +168,7 @@ const AutoAssignControls = () => {
   }
 
   return <div>
-    <button onClick={assignAll}>Auto-assign</button>
+    <button onClick={assignDivision}>Auto-assign</button>
   </div>
 }
 
