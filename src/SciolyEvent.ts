@@ -86,4 +86,8 @@ export class SciolyEvent {
   static getEventByID(events: SciolyEvent[], id: number) {
     return events.filter(event => event.id === id)[0];
   }
+
+  static getEventByName(events: SciolyEvent[], name: string) {
+    return events.filter(event => event.name === name)[0];
+  }
 }

@@ -15,7 +15,7 @@ const AutoAssignControls = ({ division }: Props) => {
   ) as AssignmentsContextType;
 
   const autoAssign = (students: Student[], events: SciolyEvent[], assignmentType: AssignmentType) => {
-    const log = true;
+    const log = false;
 
     if (log) console.log('------assignStudents ' + assignmentType);
 
@@ -140,24 +140,29 @@ const AutoAssignControls = ({ division }: Props) => {
     return studentsCopy;
   }
 
-  const assignDivision = () => {
-    let assignedStudents;
+  const assignDivision = (qcOnly = false) => {
+    let assignedStudents = Student.getCopy(students);
     if (division === 'C') {
-      assignedStudents = autoAssign(students, events, 'esC');
+      if (!qcOnly) {
+        assignedStudents = autoAssign(students, events, 'esC');
+      }
       assignedStudents = autoAssign(assignedStudents, events, 'qcC');
-      // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esC');
-      // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcC');
     }
+    // ignoring this for now because we have so many ESes that we don't need it
+    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esC');
+    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcC');
     else {
-      assignedStudents = autoAssign(students, events, 'esB');
+      if (!qcOnly) {
+        assignedStudents = autoAssign(students, events, 'esB');
+      }
       assignedStudents = autoAssign(assignedStudents, events, 'qcB');
-      // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esB');
-      // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcB');
-
     }
+    // ignoring this for now because we have so many ESes that we don't need it
+    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'esB');
+    // assignedStudents = fillEmptyAssignments(assignedStudents, events, 'qcB');
 
     for (let student of assignedStudents) {
-      for (let key in (division === 'C' ? ['esC', 'qcC'] : ['esB', 'qcB'])) {
+      for (let key of (division === 'C' ? ['esC', 'qcC'] : ['esB', 'qcB'])) {
         if (student.assignments[key as AssignmentType] === undefined) {
           console.log(`WARNING: ${student.name} is missing a ${key} assignment`);
         }
@@ -168,7 +173,8 @@ const AutoAssignControls = ({ division }: Props) => {
   }
 
   return <div>
-    <button onClick={assignDivision}>Auto-assign</button>
+    <button onClick={() => assignDivision()}>Auto-assign ES and QC</button>
+    <button onClick={() => assignDivision(true)}>Auto-assign QC only</button>
   </div>
 }
 

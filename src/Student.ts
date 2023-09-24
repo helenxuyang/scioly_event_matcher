@@ -45,6 +45,10 @@ export class Student {
     return students.filter(student => student.id === id)[0];
   }
 
+  static getStudentByName(students: Student[], name: string) {
+    return students.filter(student => student.name === name)[0];
+  }
+
   getPreferenceList(events: SciolyEvent[], students: Student[]) {
     const sortedEvents = events
       .sort((event1, event2) => {

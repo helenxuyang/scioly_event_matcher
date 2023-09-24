@@ -42,7 +42,7 @@ const SurveyImporter = () => {
             const students = data
               .filter((row, idx) => idx !== 0 && row.length > 1)
               .map((prefsData, idx) => {
-                const name = prefsData[0];
+                const name = prefsData[0].trim();
                 const prefs = new Map();
                 for (let i = 1; i < prefsData.length; i++) {
                   const rating = prefsData[i];
