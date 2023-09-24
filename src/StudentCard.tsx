@@ -51,13 +51,6 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
     }
   }
 
-  const selectedAlreadyAssigned = () => {
-    return ((assignmentType === 'esC' && student.assignments.qcC === selectedEvent) ||
-      (assignmentType === 'esB' && student.assignments.qcB === selectedEvent) ||
-      (assignmentType === 'qcC' && student.assignments.esC === selectedEvent) ||
-      (assignmentType === 'qcB' && student.assignments.esC === selectedEvent));
-  }
-
   const backgroundColor = () => {
     return getRatingColor(currentEventRating);
   };
@@ -97,7 +90,6 @@ export const StudentCard = ({ student, assignmentType }: StudentCardProps) => {
         <span className="current-event-rating">({currentEventRating})</span>
       </div>
       {doubleAssigned() && <p>⚠ Student is assigned same event for ES and QC</p>}
-      {selectedAlreadyAssigned() && <p style={{ fontSize: '10px' }}>{`Student is already assigned ${assignmentType.includes('es') ? 'QC' : 'ES'} for the currently selected event`}</p>}
       {expanded && getPrefsList()}
     </div>
   );
