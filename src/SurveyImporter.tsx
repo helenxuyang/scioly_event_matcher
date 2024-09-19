@@ -31,7 +31,7 @@ const SurveyImporter = () => {
               }
             }
             const events = data[0]
-              .filter((header) => header !== 'Full Name')
+              .filter((_, idx) => idx > 0) // exclude Name header
               .map((header, idx) => {
                 const eventName = header.slice(0, -2);
                 const division = header.slice(-1);
