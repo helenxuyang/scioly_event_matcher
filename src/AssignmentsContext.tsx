@@ -27,7 +27,7 @@ export const AssignmentsProvider = (props: any) => {
   const [events, setEvents] = useState<SciolyEvent[]>([]);
   const [division, setDivision] = useState<Division>('B');
   const [selectedEvent, setSelectedEvent] = useState<number | undefined>();
-  const [maxStudentsPerEvent, setMaxStudentsPerEvent] = useState<number>(3);
+  const [maxStudentsPerEvent, setMaxStudentsPerEvent] = useState<number>(4);
 
   const updateAssignment = (
     sid: number,

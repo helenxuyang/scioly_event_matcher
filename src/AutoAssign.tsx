@@ -10,7 +10,7 @@ type Props = {
 }
 
 const AutoAssignControls = ({ division }: Props) => {
-  const { events, students, setStudents, maxStudentsPerEvent } = useContext(
+  const { events, students, setStudents, maxStudentsPerEvent, setMaxStudentsPerEvent } = useContext(
     AssignmentsContext
   ) as AssignmentsContextType;
 
@@ -173,6 +173,9 @@ const AutoAssignControls = ({ division }: Props) => {
   }
 
   return <div>
+    <p style={{ margin: 0 }}>Max number of supervisors per event:</p>
+    <input style={{ marginBottom: 16 }} type="number" value={maxStudentsPerEvent} onChange={e => setMaxStudentsPerEvent(Number(e.target.value))}></input>
+    <br />
     <button onClick={() => assignDivision()}>Auto-assign ES and QC</button>
     <button onClick={() => assignDivision(true)}>Auto-assign QC only</button>
   </div>
